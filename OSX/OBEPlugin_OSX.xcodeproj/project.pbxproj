@@ -1,0 +1,309 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		390D46701C58172D00F1E6AF /* Plugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 390D466F1C58172D00F1E6AF /* Plugin.mm */; };
+		390D46721C58190B00F1E6AF /* IOBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 390D46711C58190B00F1E6AF /* IOBluetooth.framework */; };
+		390D46741C58193500F1E6AF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 390D46731C58193500F1E6AF /* Foundation.framework */; };
+		390D46771C581A7100F1E6AF /* OBEHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 390D46761C581A7100F1E6AF /* OBEHandler.mm */; };
+		390D46791C58452400F1E6AF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 390D46781C58452400F1E6AF /* InfoPlist.strings */; };
+		390D467B1C58455F00F1E6AF /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 390D467A1C58455F00F1E6AF /* Carbon.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		390D46621C58051000F1E6AF /* OBEPlugin_OSX.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OBEPlugin_OSX.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		390D46651C58051000F1E6AF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		390D466E1C58171800F1E6AF /* Plugin.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Plugin.pch; sourceTree = "<group>"; };
+		390D466F1C58172D00F1E6AF /* Plugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Plugin.mm; sourceTree = "<group>"; };
+		390D46711C58190B00F1E6AF /* IOBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOBluetooth.framework; path = System/Library/Frameworks/IOBluetooth.framework; sourceTree = SDKROOT; };
+		390D46731C58193500F1E6AF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		390D46751C581A7100F1E6AF /* OBEHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OBEHandler.h; sourceTree = "<group>"; };
+		390D46761C581A7100F1E6AF /* OBEHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OBEHandler.mm; sourceTree = "<group>"; };
+		390D46781C58452400F1E6AF /* InfoPlist.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
+		390D467A1C58455F00F1E6AF /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		390D465F1C58051000F1E6AF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				390D467B1C58455F00F1E6AF /* Carbon.framework in Frameworks */,
+				390D46741C58193500F1E6AF /* Foundation.framework in Frameworks */,
+				390D46721C58190B00F1E6AF /* IOBluetooth.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		390D46591C58051000F1E6AF = {
+			isa = PBXGroup;
+			children = (
+				390D466B1C5816DE00F1E6AF /* Frameworks */,
+				390D46641C58051000F1E6AF /* OBEPlugin_OSX */,
+				390D46631C58051000F1E6AF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		390D46631C58051000F1E6AF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				390D46621C58051000F1E6AF /* OBEPlugin_OSX.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		390D46641C58051000F1E6AF /* OBEPlugin_OSX */ = {
+			isa = PBXGroup;
+			children = (
+				390D466C1C5816E500F1E6AF /* Source */,
+				390D466D1C5816E900F1E6AF /* Resources */,
+			);
+			path = OBEPlugin_OSX;
+			sourceTree = "<group>";
+		};
+		390D466B1C5816DE00F1E6AF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				390D467A1C58455F00F1E6AF /* Carbon.framework */,
+				390D46731C58193500F1E6AF /* Foundation.framework */,
+				390D46711C58190B00F1E6AF /* IOBluetooth.framework */,
+			);
+			name = Frameworks;
+			path = OBEPlugin_OSX;
+			sourceTree = "<group>";
+		};
+		390D466C1C5816E500F1E6AF /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				390D466E1C58171800F1E6AF /* Plugin.pch */,
+				390D466F1C58172D00F1E6AF /* Plugin.mm */,
+				390D46751C581A7100F1E6AF /* OBEHandler.h */,
+				390D46761C581A7100F1E6AF /* OBEHandler.mm */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		390D466D1C5816E900F1E6AF /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				390D46651C58051000F1E6AF /* Info.plist */,
+				390D46781C58452400F1E6AF /* InfoPlist.strings */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		390D46611C58051000F1E6AF /* OBEPlugin_OSX */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 390D46681C58051000F1E6AF /* Build configuration list for PBXNativeTarget "OBEPlugin_OSX" */;
+			buildPhases = (
+				390D465E1C58051000F1E6AF /* Sources */,
+				390D465F1C58051000F1E6AF /* Frameworks */,
+				390D46601C58051000F1E6AF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OBEPlugin_OSX;
+			productName = OBEPlugin_OSX;
+			productReference = 390D46621C58051000F1E6AF /* OBEPlugin_OSX.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		390D465A1C58051000F1E6AF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0720;
+				ORGANIZATIONNAME = "Machina Wearable Technology SAPI de CV";
+				TargetAttributes = {
+					390D46611C58051000F1E6AF = {
+						CreatedOnToolsVersion = 7.2;
+					};
+				};
+			};
+			buildConfigurationList = 390D465D1C58051000F1E6AF /* Build configuration list for PBXProject "OBEPlugin_OSX" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 390D46591C58051000F1E6AF;
+			productRefGroup = 390D46631C58051000F1E6AF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				390D46611C58051000F1E6AF /* OBEPlugin_OSX */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		390D46601C58051000F1E6AF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				390D46791C58452400F1E6AF /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		390D465E1C58051000F1E6AF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				390D46701C58172D00F1E6AF /* Plugin.mm in Sources */,
+				390D46771C581A7100F1E6AF /* OBEHandler.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		390D46661C58051000F1E6AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		390D46671C58051000F1E6AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		390D46691C58051000F1E6AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				INFOPLIST_FILE = OBEPlugin_OSX/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "Machina.OBEPlugin-OSX";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		390D466A1C58051000F1E6AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				INFOPLIST_FILE = OBEPlugin_OSX/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "Machina.OBEPlugin-OSX";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		390D465D1C58051000F1E6AF /* Build configuration list for PBXProject "OBEPlugin_OSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				390D46661C58051000F1E6AF /* Debug */,
+				390D46671C58051000F1E6AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		390D46681C58051000F1E6AF /* Build configuration list for PBXNativeTarget "OBEPlugin_OSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				390D46691C58051000F1E6AF /* Debug */,
+				390D466A1C58051000F1E6AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 390D465A1C58051000F1E6AF /* Project object */;
+}
