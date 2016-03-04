@@ -1,0 +1,17 @@
+/Users/Henryforce/Documents/Unity Projects/OBE_Test/Temp/bin/Debug/Assembly-CSharp.dll.mdb
+/Users/Henryforce/Documents/Unity Projects/OBE_Test/Temp/bin/Debug/Assembly-CSharp.dll
+/Users/Henryforce/Documents/Unity Projects/OBE_Test/obj/Debug/Assembly-CSharp.dll
+/Users/Henryforce/Documents/Unity Projects/OBE_Test/obj/Debug/Assembly-CSharp.dll.mdb
+/Users/Henryforce/Documents/Unity Projects/OBE_Test/Temp/bin/Debug/UnityEngine.dll
+/Users/Henryforce/Documents/Unity Projects/OBE_Test/Temp/bin/Debug/UnityEditor.dll
+/Users/Henryforce/Documents/Unity Projects/OBE_Test/Temp/bin/Debug/UnityEngine.UI.dll
+/Users/Henryforce/Documents/Unity Projects/OBE_Test/Temp/bin/Debug/UnityEngine.Networking.dll
+/Users/Henryforce/Documents/Unity Projects/OBE_Test/Temp/bin/Debug/Mono.Cecil.dll
+/Users/Henryforce/Documents/Unity Projects/OBE_Test/Temp/bin/Debug/Unity.SerializationLogic.dll
+/Users/Henryforce/Documents/Unity Projects/OBE_Test/Temp/bin/Debug/Unity.DataContract.dll
+/Users/Henryforce/Documents/Unity Projects/OBE_Test/Temp/bin/Debug/ICSharpCode.NRefactory.dll
+/Users/Henryforce/Documents/Unity Projects/OBE_Test/Temp/bin/Debug/Unity.UNetWeaver.dll
+/Users/Henryforce/Documents/Unity Projects/OBE_Test/Temp/bin/Debug/Unity.UNetWeaver.dll.mdb
+/Users/Henryforce/Documents/Unity Projects/OBE_Test/Temp/bin/Debug/Unity.CecilTools.dll
+/Users/Henryforce/Documents/Unity Projects/OBE_Test/Temp/bin/Debug/Mono.Cecil.Pdb.dll
+/Users/Henryforce/Documents/Unity Projects/OBE_Test/Temp/bin/Debug/Mono.Cecil.Mdb.dll
