@@ -126,6 +126,28 @@ int isConnected(){
     }
 }
 
+int isReadyToScan(){
+    if(handler == nil){
+        return 0;
+    }else{
+        return handler.isReadyToScan;
+    }
+}
+
+void UpdateMotors(){
+    if(handler != nil){
+        [handler updateMotorState];
+    }
+}
+
+int getButtons(){
+    if(handler != nil){
+        return handler.Buttons;
+    }else{
+        return 0;
+    }
+}
+
 float getQW(int identifier){
     float auxFloat = 0.0f;
     if(handler == nil){
@@ -202,4 +224,208 @@ float getQZ(int identifier){
     return auxFloat;
 }
 
+float getAX(int identifier){
+    float auxFloat = 0.0f;
+    if(handler == nil){
+        return auxFloat;
+    }
+    switch(identifier){
+        case OBEQuaternionLeft:
+            auxFloat = handler.axLeft;
+            break;
+        case OBEQuaternionRight:
+            auxFloat = handler.axRight;
+            break;
+        case OBEQuaternionCenter:
+            auxFloat = handler.axCenter;
+            break;
+    }
+    return auxFloat;
+}
 
+float getAY(int identifier){
+    float auxFloat = 0.0f;
+    if(handler == nil){
+        return auxFloat;
+    }
+    switch(identifier){
+        case OBEQuaternionLeft:
+            auxFloat = handler.ayLeft;
+            break;
+        case OBEQuaternionRight:
+            auxFloat = handler.ayRight;
+            break;
+        case OBEQuaternionCenter:
+            auxFloat = handler.ayCenter;
+            break;
+    }
+    return auxFloat;
+}
+
+float getAZ(int identifier){
+    float auxFloat = 0.0f;
+    if(handler == nil){
+        return auxFloat;
+    }
+    switch(identifier){
+        case OBEQuaternionLeft:
+            auxFloat = handler.azLeft;
+            break;
+        case OBEQuaternionRight:
+            auxFloat = handler.azRight;
+            break;
+        case OBEQuaternionCenter:
+            auxFloat = handler.azCenter;
+            break;
+    }
+    return auxFloat;
+}
+
+float getGX(int identifier){
+    float auxFloat = 0.0f;
+    if(handler == nil){
+        return auxFloat;
+    }
+    switch(identifier){
+        case OBEQuaternionLeft:
+            auxFloat = handler.gxLeft;
+            break;
+        case OBEQuaternionRight:
+            auxFloat = handler.gxRight;
+            break;
+        case OBEQuaternionCenter:
+            auxFloat = handler.gxCenter;
+            break;
+    }
+    return auxFloat;
+}
+
+float getGY(int identifier){
+    float auxFloat = 0.0f;
+    if(handler == nil){
+        return auxFloat;
+    }
+    switch(identifier){
+        case OBEQuaternionLeft:
+            auxFloat = handler.gyLeft;
+            break;
+        case OBEQuaternionRight:
+            auxFloat = handler.gyRight;
+            break;
+        case OBEQuaternionCenter:
+            auxFloat = handler.gyCenter;
+            break;
+    }
+    return auxFloat;
+}
+
+float getGZ(int identifier){
+    float auxFloat = 0.0f;
+    if(handler == nil){
+        return auxFloat;
+    }
+    switch(identifier){
+        case OBEQuaternionLeft:
+            auxFloat = handler.gzLeft;
+            break;
+        case OBEQuaternionRight:
+            auxFloat = handler.gzRight;
+            break;
+        case OBEQuaternionCenter:
+            auxFloat = handler.gzCenter;
+            break;
+    }
+    return auxFloat;
+}
+
+float getMX(int identifier){
+    float auxFloat = 0.0f;
+    if(handler == nil){
+        return auxFloat;
+    }
+    switch(identifier){
+        case OBEQuaternionLeft:
+            auxFloat = handler.mxLeft;
+            break;
+        case OBEQuaternionRight:
+            auxFloat = handler.mxRight;
+            break;
+        case OBEQuaternionCenter:
+            auxFloat = handler.mxCenter;
+            break;
+    }
+    return auxFloat;
+}
+
+float getMY(int identifier){
+    float auxFloat = 0.0f;
+    if(handler == nil){
+        return auxFloat;
+    }
+    switch(identifier){
+        case OBEQuaternionLeft:
+            auxFloat = handler.myLeft;
+            break;
+        case OBEQuaternionRight:
+            auxFloat = handler.myRight;
+            break;
+        case OBEQuaternionCenter:
+            auxFloat = handler.myCenter;
+            break;
+    }
+    return auxFloat;
+}
+
+float getMZ(int identifier){
+    float auxFloat = 0.0f;
+    if(handler == nil){
+        return auxFloat;
+    }
+    switch(identifier){
+        case OBEQuaternionLeft:
+            auxFloat = handler.mzLeft;
+            break;
+        case OBEQuaternionRight:
+            auxFloat = handler.mzRight;
+            break;
+        case OBEQuaternionCenter:
+            auxFloat = handler.mzCenter;
+            break;
+    }
+    return auxFloat;
+}
+
+void setMotor1(float speed){
+    if(handler != nil){
+        //[handler setMotor1:speed];
+        handler.Motor1 = setFloatBounds(speed);
+    }
+}
+
+void setMotor2(float speed){
+    if(handler != nil){
+        [handler setMotor2:setFloatBounds(speed)];
+    }
+}
+
+void setMotor3(float speed){
+    if(handler != nil){
+        //[handler setMotor3:speed];
+        handler.Motor3 = setFloatBounds(speed);
+    }
+}
+
+void setMotor4(float speed){
+    if(handler != nil){
+        [handler setMotor4:setFloatBounds(speed)];
+    }
+}
+
+float setFloatBounds(float var){
+    if(var > 1.0f){
+        return 1.0f;
+    }else if(var < 0.0f){
+        return 0.0f;
+    }
+    return var;
+}

@@ -6,11 +6,17 @@ using System.Runtime.InteropServices;
 public class OBEController : MonoBehaviour {
 
 	public GameObject obeCube;
+	public GameObject obeCubeBody;
+	public GameObject obeCube2;
+	public GameObject obeCube2Body;
 
 	private float W = 1, X = 1, Y = 1, Z = 1;
 
+	private Boolean shouldUpdate = false;
+
 	//private OBE obe;
 	private OBEPlugin plugin;
+	private Quaternion auxQ, auxQ2, O1, O2;
 
 	void Awake() {
 		Application.targetFrameRate = 30;
@@ -53,9 +59,9 @@ public class OBEController : MonoBehaviour {
 			//Debug.Log("Service Characteristic: " + name);
 		});
 */
-
 		//plugin.setCallback (this);
-		plugin.startScanning ();
+
+		//plugin.startScanning ();
 
 
 		//obe = new OBE ();
@@ -64,6 +70,15 @@ public class OBEController : MonoBehaviour {
 
 		//init ();
 		//startScanning ();
+
+		auxQ = new Quaternion (0,0,0,1);
+		auxQ2 = new Quaternion (0,0,0,1);
+
+		O1 = obeCube.transform.rotation;
+		O2 = obeCube2.transform.rotation;
+
+		//Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer>();
+		//rend.material.color = new Color(1.0f, 0.0f, 0.0f);
 	}
 
 	// Update is called once per frame
@@ -77,21 +92,99 @@ public class OBEController : MonoBehaviour {
 		// fetch current data sent from OBE
 		plugin.fetch ();
 
-
+		//Debug.Log (plugin.bleState.ToString());
 
 		//Quaternion q22 = new Quaternion (0.5, 0.5, 0.5, 0.5);
 		//obeCube.transform.rotation = plugin.QuaternionLeft * obeCube.transform.rotation;
 		//obeCube.transform.Rotate (plugin.QuaternionLeft.eulerAngles.x, plugin.QuaternionLeft.eulerAngles.y,
 		//	plugin.QuaternionLeft.eulerAngles.z);
 
-		//obeCube.transform.rotation = plugin.QuaternionLeft;
-		//obeCube.transform.rotation = q22 * plugin.QuaternionLeft;
+		if((auxQ.w != plugin.QuaternionLeft.w) || (auxQ.x != plugin.QuaternionLeft.x) ||
+			(auxQ.y != plugin.QuaternionLeft.y) || (auxQ.z != plugin.QuaternionLeft.z)){
+			obeCube.transform.rotation = O1 * plugin.QuaternionLeft;
+			//obeCube.transform.rotation *= plugin.QuaternionLeft;
+			//obeCube.transform.rotation = q22 * plugin.QuaternionLeft;
+
+			//printQuaternion(plugin.QuaternionLeft.eulerAngles.x, plugin.QuaternionLeft.eulerAngles.y,
+			//	plugin.QuaternionLeft.eulerAngles.z,0,0);
+		}
+
+		if((auxQ2.w != plugin.QuaternionRight.w) || (auxQ2.x != plugin.QuaternionRight.x) ||
+			(auxQ2.y != plugin.QuaternionRight.y) || (auxQ2.z != plugin.QuaternionRight.z)){
+			obeCube2.transform.rotation = O2 * plugin.QuaternionRight;
+			//obeCube.transform.rotation *= plugin.QuaternionLeft;
+			//obeCube.transform.rotation = q22 * plugin.QuaternionLeft;
+
+			//printQuaternion(plugin.QuaternionLeft.eulerAngles.x, plugin.QuaternionLeft.eulerAngles.y,
+			//	plugin.QuaternionLeft.eulerAngles.z,0,0);
+		}
+
+		auxQ = plugin.QuaternionLeft;
+		auxQ2 = plugin.QuaternionRight;
+
+		shouldUpdate = !shouldUpdate;
+		if (shouldUpdate) {
+
+			if (Input.GetKey (KeyCode.A)) {
+				plugin.OBEMotor1 = 1.0f;
+			} else {
+				plugin.OBEMotor1 = 0.0f;
+			}
+
+			if (Input.GetKey (KeyCode.S)) {
+				plugin.OBEMotor2 = 1.0f;
+			} else {
+				plugin.OBEMotor2 = 0.0f;
+			}
+
+			if (Input.GetKey (KeyCode.D)) {
+				plugin.OBEMotor3 = 1.0f;
+			} else {
+				plugin.OBEMotor3 = 0.0f;
+			}
+
+			if (Input.GetKey (KeyCode.W)) {
+				plugin.OBEMotor4 = 1.0f;
+			} else {
+				plugin.OBEMotor4 = 0.0f;
+			}
+			//Debug.Log (plugin.OBEMotor1.ToString());
+			plugin.updateMotors ();
+		}
+
+		if (plugin.button1) {
+			Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer>();
+			rend.material.color = new Color(0.0f, 1.0f, 0.0f);
+		} else {
+			if (plugin.button2) {
+				Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer>();
+				rend.material.color = new Color(1.0f, 0.0f, 0.0f);
+			} else {
+				Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer>();
+				rend.material.color = new Color(1.0f, 1.0f, 1.0f);
+			}
+		}
+
+		if (plugin.button3) {
+			Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer>();
+			rend.material.color = new Color(0.0f, 0.0f, 1.0f);
+		} else {
+			if (plugin.button4) {
+				Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
+				rend.material.color = new Color (1.0f, 0.0f, 1.0f);
+			} else {
+				Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
+				rend.material.color = new Color (1.0f, 1.0f, 1.0f);
+			}
+		}
+
 
 		//obeCube.transform.rotation.Set (plugin.QuaternionLeft.x, plugin.QuaternionLeft.y, 
 		//	plugin.QuaternionLeft.z, plugin.QuaternionLeft.w);
 
-		printQuaternion (plugin.QuaternionLeft.w, plugin.QuaternionLeft.x, plugin.QuaternionLeft.y, 
-			plugin.QuaternionLeft.z, 0);
+		//printQuaternion (plugin.QuaternionLeft.w, plugin.QuaternionLeft.x, plugin.QuaternionLeft.y, 
+		//	plugin.QuaternionLeft.z, 0);
+
 	}
 
 	void printQuaternion(float w, float x, float y, float z, int identifier){

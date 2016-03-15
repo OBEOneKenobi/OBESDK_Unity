@@ -13,10 +13,14 @@
 #define OBEQuaternionCharacteristic_Left @"0003cbb2-0000-1000-8000-00805F9B0131"
 #define OBEQuaternionCharacteristic_Right @"0003cbb3-0000-1000-8000-00805F9B0131"
 #define OBEQuaternionCharacteristic_Center @"0003cbb4-0000-1000-8000-00805F9B0131"
+#define OBEHapticCharacteristic @"0003cbb1-0000-1000-8000-00805F9B0131"
 
 #define OBEQuaternionLeft 0
 #define OBEQuaternionRight 1
 #define OBEQuaternionCenter 2
+
+#define OBEMPUDataSize 20
+#define OBEHapticDataSize 7
 
 void SendQuaternion(float w, float x, float y, float z, int identifier);
 //void SendQuaternion_Right(float w, float x, float y, float z);
@@ -63,16 +67,21 @@ union {
     switch ([manager state]){
         case CBCentralManagerStateUnsupported:
             state = @"Bluetooth 4.0 unsupported!";
+            _isReadyToScan = 1;
             break;
         case CBCentralManagerStateUnauthorized:
             state = @"Application doesn't have permission to use Bluetooth...";
+            _isReadyToScan = 2;
             break;
         case CBCentralManagerStatePoweredOff:
             state = @"Bluetooth turned off!";
+            _isReadyToScan = 3;
             break;
         case CBCentralManagerStatePoweredOn:
+            _isReadyToScan = 4;
             return TRUE;
         case CBCentralManagerStateUnknown:
+            _isReadyToScan = 5;
         default:
             return FALSE;
             
@@ -135,6 +144,12 @@ union {
     }
 }
 
+- (void) updateMotorState{
+    if((obePeripheral != nil) && (obeHapticCh != nil)){
+        shouldUpdateMotor = YES;
+    }
+}
+
 #pragma mark - CBCentralManager delegate methods
 
 /*
@@ -143,7 +158,8 @@ union {
 - (void) centralManagerDidUpdateState:(CBCentralManager *)central{
     //[self isLECapableHardware];
     if([central state] == CBCentralManagerStatePoweredOn){
-        
+        //_isReadyToScan = YES;
+        [self isLECapableHardware];
     }
 }
 
@@ -198,6 +214,7 @@ union {
     
     //self.connected = @"Connected";
     _isConnected = true;
+    hasFinishedUpdate = YES;
 }
 
 /*
@@ -296,12 +313,23 @@ union {
                 //NSLog(@"Found BG Cable Replacement DATA Characteristic");
                 
                 obeQuaternionCh_Left = aChar;
-            }else if ([aChar.UUID isEqual:[CBUUID UUIDWithString:OBEQuaternionCharacteristic_Right]]){
+            }/*else if ([aChar.UUID isEqual:[CBUUID UUIDWithString:OBEQuaternionCharacteristic_Right]]){
                 //[aPeripheral readValueForCharacteristic:aChar];
                 [obePeripheral setNotifyValue:YES forCharacteristic:aChar];
                 //NSLog(@"Found BG Cable Replacement DATA Characteristic");
                 
                 obeQuaternionCh_Right = aChar;
+            }else if ([aChar.UUID isEqual:[CBUUID UUIDWithString:OBEQuaternionCharacteristic_Center]]){
+                //[aPeripheral readValueForCharacteristic:aChar];
+                [obePeripheral setNotifyValue:YES forCharacteristic:aChar];
+                //NSLog(@"Found BG Cable Replacement DATA Characteristic");
+                
+                obeQuaternionCh_Center = aChar;
+            }*/else if ([aChar.UUID isEqual:[CBUUID UUIDWithString:OBEHapticCharacteristic]]){
+                //[aPeripheral readValueForCharacteristic:aChar];
+                //NSLog(@"Found BG Cable Replacement DATA Characteristic");
+                
+                obeHapticCh = aChar;
             }
             
             //NSString *nameString = [aChar.UUID UUIDString];
@@ -331,57 +359,71 @@ union {
         }else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:OBEQuaternionCharacteristic_Left]]){
             
             NSData *quaternion = [characteristic value];
-            if([quaternion length] == 16){
+            if([quaternion length] == OBEMPUDataSize){
                 
-                Byte *buffer = (Byte *)malloc(sizeof(Byte) * 4);
-                [quaternion getBytes:buffer length:16];
+                Byte *buffer = (Byte *)malloc(sizeof(Byte) * OBEMPUDataSize);
+                [quaternion getBytes:buffer length:OBEMPUDataSize];
                 
-                assignBufferToStruct(buffer);
+                //assignBufferToStruct(buffer);
+                [self assignBuffer:buffer withIdentifier:buffer[18]];
                 
                 free(buffer);
                 
-                [self assignFloatQuaternion:OBEQuaternionLeft];
+                if(buffer[18] == OBEQuaternionRight){
+                    _Buttons = buffer[19] & 0xFF;
+                    if(shouldUpdateMotor){
+                        if(hasFinishedUpdate){
+                            hasFinishedUpdate = NO;
+                            shouldUpdateMotor = NO;
+                            [self motorUpdate];
+                        }
+                    }
+                }
+                
+                //[self assignFloatQuaternion:OBEQuaternionLeft];
                 //SendQuaternion(wQuaternion.float_variable, xQuaternion.float_variable, yQuaternion.float_variable, zQuaternion.float_variable, OBEQuaternionLeft);
             }
             
             //lastFloat += 0.5f;
             //SendQuaternion(lastFloat, lastFloat * 10.0f, lastFloat / 2.0f, lastFloat + 5.0f);
-        }else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:OBEQuaternionCharacteristic_Right]]){
+        }/*else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:OBEQuaternionCharacteristic_Right]]){
             
             NSData *quaternion = [characteristic value];
-            if([quaternion length] == 16){
+            if([quaternion length] == OBEMPUDataSize){
                 
-                Byte *buffer = (Byte *)malloc(sizeof(Byte) * 4);
-                [quaternion getBytes:buffer length:16];
+                Byte *buffer = (Byte *)malloc(sizeof(Byte) * OBEMPUDataSize);
+                [quaternion getBytes:buffer length:OBEMPUDataSize];
                 
-                assignBufferToStruct(buffer);
+                //assignBufferToStruct(buffer);
+                [self assignBuffer:buffer withIdentifier:OBEQuaternionRight];
                 
                 free(buffer);
                 
-                [self assignFloatQuaternion:OBEQuaternionRight];
+                //[self assignFloatQuaternion:OBEQuaternionRight];
                 //SendQuaternion(wQuaternion.float_variable, xQuaternion.float_variable, yQuaternion.float_variable, zQuaternion.float_variable, OBEQuaternionRight);
             }
             
         }else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:OBEQuaternionCharacteristic_Center]]){
             
             NSData *quaternion = [characteristic value];
-            if([quaternion length] == 16){
+            if([quaternion length] == OBEMPUDataSize){
                 
-                Byte *buffer = (Byte *)malloc(sizeof(Byte) * 4);
-                [quaternion getBytes:buffer length:16];
+                Byte *buffer = (Byte *)malloc(sizeof(Byte) * OBEMPUDataSize);
+                [quaternion getBytes:buffer length:OBEMPUDataSize];
                 
-                assignBufferToStruct(buffer);
+                //assignBufferToStruct(buffer);
+                [self assignBuffer:buffer withIdentifier:OBEQuaternionCenter];
                 
                 free(buffer);
                 
-                [self assignFloatQuaternion:OBEQuaternionCenter];
-                /*dispatch_async(dispatch_get_main_queue(), ^{
-                    SendQuaternion(wQuaternion.float_variable, xQuaternion.float_variable, yQuaternion.float_variable, zQuaternion.float_variable, OBEQuaternionCenter);
-                });*/
+                //[self assignFloatQuaternion:OBEQuaternionCenter];
+                //dispatch_async(dispatch_get_main_queue(), ^{
+                //    SendQuaternion(wQuaternion.float_variable, xQuaternion.float_variable, yQuaternion.float_variable, zQuaternion.float_variable, OBEQuaternionCenter);
+                //});
                 //SendQuaternion(wQuaternion.float_variable, xQuaternion.float_variable, yQuaternion.float_variable, zQuaternion.float_variable, OBEQuaternionCenter);
             }
             
-        }
+        }*/
     //});
 }
 
@@ -430,5 +472,82 @@ void assignBufferToStruct(Byte *buffer){
     zQuaternion.temp_array[3] = buffer[15];
 }
 
+- (void) assignBuffer:(Byte *)buffer withIdentifier:(int) identifier{
+    switch(identifier){
+        case OBEQuaternionLeft:
+            _axLeft = (float)((int16_t)((buffer[0] << 8) | buffer[1])); _axLeft /= 32768.0f;
+            _ayLeft = (float)((int16_t)((buffer[2] << 8) | buffer[3])); _ayLeft /= 32768.0f;
+            _azLeft = (float)((int16_t)((buffer[4] << 8) | buffer[5])); _azLeft /= 32768.0f;
+            _gxLeft = (float)((int16_t)((buffer[6] << 8) | buffer[7])); _gxLeft /= 32768.0f;
+            _gyLeft = (float)((int16_t)((buffer[8] << 8) | buffer[9])); _gyLeft /= 32768.0f;
+            _gzLeft = (float)((int16_t)((buffer[10] << 8) | buffer[11])); _gzLeft /= 32768.0f;
+            _mxLeft = (float)((int16_t)((buffer[12] << 8) | buffer[13])); _mxLeft /= 32768.0f;
+            _myLeft = (float)((int16_t)((buffer[14] << 8) | buffer[15])); _myLeft /= 32768.0f;
+            _mzLeft = (float)((int16_t)((buffer[16] << 8) | buffer[17])); _mzLeft /= 32768.0f;
+            break;
+        case OBEQuaternionRight:
+            _axRight = (float)((int16_t)((buffer[0] << 8) | buffer[1])); _axRight /= 32768.0f;
+            _ayRight = (float)((int16_t)((buffer[2] << 8) | buffer[3])); _ayRight /= 32768.0f;
+            _azRight = (float)((int16_t)((buffer[4] << 8) | buffer[5])); _azRight /= 32768.0f;
+            _gxRight = (float)((int16_t)((buffer[6] << 8) | buffer[7])); _gxRight /= 32768.0f;
+            _gyRight = (float)((int16_t)((buffer[8] << 8) | buffer[9])); _gyRight /= 32768.0f;
+            _gzRight = (float)((int16_t)((buffer[10] << 8) | buffer[11])); _gzRight /= 32768.0f;
+            _mxRight = (float)((int16_t)((buffer[12] << 8) | buffer[13])); _mxRight /= 32768.0f;
+            _myRight = (float)((int16_t)((buffer[14] << 8) | buffer[15])); _myRight /= 32768.0f;
+            _mzRight = (float)((int16_t)((buffer[16] << 8) | buffer[17])); _mzRight /= 32768.0f;
+            break;
+        case OBEQuaternionCenter:
+            _axCenter = (float)((int16_t)((buffer[0] << 8) | buffer[1])); _axCenter /= 32768.0f;
+            _ayCenter = (float)((int16_t)((buffer[2] << 8) | buffer[3])); _ayCenter /= 32768.0f;
+            _azCenter = (float)((int16_t)((buffer[4] << 8) | buffer[5])); _azCenter /= 32768.0f;
+            _gxCenter = (float)((int16_t)((buffer[6] << 8) | buffer[7])); _gxCenter /= 32768.0f;
+            _gyCenter = (float)((int16_t)((buffer[8] << 8) | buffer[9])); _gyCenter /= 32768.0f;
+            _gzCenter = (float)((int16_t)((buffer[10] << 8) | buffer[11])); _gzCenter /= 32768.0f;
+            _mxCenter = (float)((int16_t)((buffer[12] << 8) | buffer[13])); _mxCenter /= 32768.0f;
+            _myCenter = (float)((int16_t)((buffer[14] << 8) | buffer[15])); _myCenter /= 32768.0f;
+            _mzCenter = (float)((int16_t)((buffer[16] << 8) | buffer[17])); _mzCenter /= 32768.0f;
+            break;
+    }
+}
+
+- (void) motorUpdate{
+    dispatch_async(dispatch_get_global_queue(0,0), ^{//normal priority
+    
+    Byte motor1 = (Byte)(_Motor1 * 255.0f);
+     Byte motor2 = (Byte)(_Motor2 * 255.0f);
+     Byte motor3 = (Byte)(_Motor3 * 255.0f);
+     Byte motor4 = (Byte)(_Motor4 * 255.0f);
+    
+    /*Byte motor1 = turnOn ? 0xFF : 0x00;
+    Byte motor2 = turnOn ? 0xFF : 0x00;
+    Byte motor3 = turnOn ? 0xFF : 0x00;
+    Byte motor4 = turnOn ? 0xFF : 0x00;*/
+    
+    Byte auxByte[OBEHapticDataSize];
+    auxByte[0] = 0x7E;
+    auxByte[1] = motor1;
+    auxByte[2] = motor2;
+    //auxByte[3] = turnOn ? 0xFF : 0x00;
+    auxByte[3] = motor3;
+    auxByte[4] = motor4;
+    auxByte[5] = 0xFF;
+    auxByte[6] = 0x00;
+    
+    /*counter += 5;
+     if(counter > 255){
+     turnOn = !turnOn;
+     counter = 0;
+     }*/
+    
+    turnOn = !turnOn;
+    
+    NSData *auxData = [NSData dataWithBytes:auxByte length:OBEHapticDataSize];
+    
+    [obePeripheral writeValue:auxData forCharacteristic:obeHapticCh type:CBCharacteristicWriteWithoutResponse];
+    
+    //auxData = nil;
+        hasFinishedUpdate = YES;
+    });
+}
 
 @end
