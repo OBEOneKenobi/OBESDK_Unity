@@ -22,14 +22,14 @@ import java.util.UUID;
 
 public class OBEPlugin {
 	//TODO: Right and Center missing the right characteristic
-	private static String QuaternionCharacteristic_Left = "0003cbb2-0000-1000-8000-00805f9b0131";
-	private static String QuaternionCharacteristic_Right = "0003cbb2-0000-1000-8000-00805f9b0132";
-	private static String QuaternionCharacteristic_Center = "0003cbb2-0000-1000-8000-00805f9b0133";
+	private static String QuaternionCharacteristic = "0003cbb2-0000-1000-8000-00805f9b0131";
+	private static String HapticCharacteristic = "0003cbb1-0000-1000-8000-00805f9b0131";
 	
 	private static int QuaternionLeft = 0;
 	private static int QuaternionRight = 1;
 	private static int QuaternionCenter = 2;
 	private static int MPUDataSize = 20;
+	private static int HapticDataSize = 7;
 	
     private Context context;
     private static OBEPlugin instance;
@@ -48,6 +48,7 @@ public class OBEPlugin {
     private float gxCenter, gyCenter, gzCenter;
     private float mxCenter, myCenter, mzCenter;
     private int Buttons;
+    private float Motor1, Motor2, Motor3, Motor4;
     
     //BluetoothGattCharacteristic correct_characteristic;
     BluetoothGattCharacteristic write_characteristic;
@@ -276,6 +277,10 @@ public class OBEPlugin {
     	return Buttons;
     }
     
+    public void setMotors(float motor1, float motor2, float motor3, float motor4){
+    	Motor1 = motor1; Motor2 = motor2; Motor3 = motor3; Motor4 = motor4;
+    }
+    
     private final BluetoothGattCallback mGattCallback =
             new BluetoothGattCallback() {
     	
@@ -336,7 +341,7 @@ public class OBEPlugin {
         			// OBE-Controls Characteristic
         			// e7add780-b042-4876-aae1-112855353cc1
         			//if (uuid.startsWith("0003cbb2-0000-1000-8000-00805f9b0131")) {
-        			if(uuid.startsWith(QuaternionCharacteristic_Left) )/*|| uuid.startsWith(QuaternionCharacteristic_Right)
+        			if(uuid.startsWith(QuaternionCharacteristic) )/*|| uuid.startsWith(QuaternionCharacteristic_Right)
         					|| uuid.startsWith(QuaternionCharacteristic_Center))*/
         			{
         				//Log.d("MAIN", "Activating Notifications" );
@@ -362,8 +367,8 @@ public class OBEPlugin {
         				}
         			}
         			//OBE-Haptics Characteristic
-        			else if(uuid.startsWith("0003cbb1-0000-1000-8000-00805f9b0131")){
-        				//write_characteristic = gattCharacteristic;
+        			else if(uuid.startsWith(HapticCharacteristic)){
+        				write_characteristic = gattCharacteristic;
         			}
         		}
         		//Log.d("MAIN", "Characterisitic" );
@@ -473,8 +478,7 @@ public class OBEPlugin {
             for (BluetoothDevice device : pairedDevices) {
                 //mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
                 Log.d("MAIN", device.getName() + " -> " + device.getAddress());
-                if (device.getName().startsWith("OBE"))
-                {
+                if (device.getName().startsWith("OBE")){
                     Log.d("MAIN", "OBE FOUND");
                     mBluetoothGatt = device.connectGatt(this.context, false, mGattCallback);
                     return;
@@ -501,8 +505,19 @@ public class OBEPlugin {
     }
 
     // Update OBE_Haptics characteristic
-    public void writeCharacteristic(byte[] data){
+    public void updateMotors(){
     	if(write_characteristic != null){
+    		
+    		byte[] data = new byte[HapticDataSize];
+    		
+    		data[0] = (byte)0x7E;
+    		data[1] = floatToByte(Motor1);
+    		data[2] = floatToByte(Motor2);
+    		data[3] = floatToByte(Motor3);
+    		data[4] = floatToByte(Motor4);
+    		data[5] = (byte)0xFF;
+    		data[6] = 0x00;
+    		
     		write_characteristic.setValue(data);
         	write_characteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
         	mBluetoothGatt.writeCharacteristic(write_characteristic);
@@ -554,5 +569,13 @@ public class OBEPlugin {
     	auxF /= 32768.0f;
     	
     	return auxF;
+    }
+    
+    private byte floatToByte(float var){
+    	byte auxB = 0;
+    	
+    	auxB = (byte)(((int)(var * 255.0f)) & 0xFF);
+    	
+    	return auxB;
     }
 }
