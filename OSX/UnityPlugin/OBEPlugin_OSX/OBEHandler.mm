@@ -369,7 +369,7 @@ union {
                 
                 free(buffer);
                 
-                if(buffer[18] == OBEQuaternionRight){
+                if(buffer[18] == OBEQuaternionCenter){
                     _Buttons = buffer[19] & 0xFF;
                     if(shouldUpdateMotor){
                         if(hasFinishedUpdate){

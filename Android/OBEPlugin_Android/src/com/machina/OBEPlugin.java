@@ -430,7 +430,7 @@ public class OBEPlugin {
         		
         		int aux = arrayOfByte[MPUDataSize - 2];
         		bufferToFloat(arrayOfByte, aux);
-        		if(aux == QuaternionRight){
+        		if(aux == QuaternionCenter){
         			Buttons = arrayOfByte[19] & 0xFF;
         		}
         		

@@ -9,6 +9,7 @@ public class OBEController : MonoBehaviour {
 	public GameObject obeCubeBody;
 	public GameObject obeCube2;
 	public GameObject obeCube2Body;
+	public GameObject obeCube3;
 
 	private float W = 1, X = 1, Y = 1, Z = 1;
 
@@ -16,7 +17,7 @@ public class OBEController : MonoBehaviour {
 
 	//private OBE obe;
 	private OBEPlugin plugin;
-	private Quaternion auxQ, auxQ2, O1, O2;
+	private Quaternion auxQ, auxQ2, auxQ3, O1, O2, O3;
 
 	void Awake() {
 		Application.targetFrameRate = 24;
@@ -69,11 +70,13 @@ public class OBEController : MonoBehaviour {
 
 		auxQ = new Quaternion (0,0,0,1);
 		auxQ2 = new Quaternion (0,0,0,1);
+		auxQ3 = new Quaternion (0,0,0,1);
 
 		O1 = obeCube.transform.rotation;
 		O2 = obeCube2.transform.rotation;
+		O3 = obeCube3.transform.rotation;
 
-		Invoke ("startOBE", 1.0f);
+		Invoke ("startOBE", 1.0f); // start function 1 second after
 
 		//Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer>();
 		//rend.material.color = new Color(1.0f, 0.0f, 0.0f);
@@ -92,7 +95,7 @@ public class OBEController : MonoBehaviour {
 
 		if (plugin != null) {
 			// try to connect to the first OBE that's nearby
-			// if connected the following line does nothing
+			// if an OBE is connected, the following line does nothing
 			plugin.connectToOBE (0);
 
 			// fetch current data sent from OBE
@@ -100,16 +103,9 @@ public class OBEController : MonoBehaviour {
 
 			//Debug.Log (plugin.bleState.ToString());
 
-			//Quaternion q22 = new Quaternion (0.5, 0.5, 0.5, 0.5);
-			//obeCube.transform.rotation = plugin.QuaternionLeft * obeCube.transform.rotation;
-			//obeCube.transform.Rotate (plugin.QuaternionLeft.eulerAngles.x, plugin.QuaternionLeft.eulerAngles.y,
-			//	plugin.QuaternionLeft.eulerAngles.z);
-
 			if ((auxQ.w != plugin.QuaternionLeft.w) || (auxQ.x != plugin.QuaternionLeft.x) ||
 			  (auxQ.y != plugin.QuaternionLeft.y) || (auxQ.z != plugin.QuaternionLeft.z)) {
 				obeCube.transform.rotation = O1 * plugin.QuaternionLeft;
-				//obeCube.transform.rotation *= plugin.QuaternionLeft;
-				//obeCube.transform.rotation = q22 * plugin.QuaternionLeft;
 
 				//printQuaternion(plugin.QuaternionLeft.eulerAngles.x, plugin.QuaternionLeft.eulerAngles.y,
 				//	plugin.QuaternionLeft.eulerAngles.z,0,0);
@@ -118,8 +114,14 @@ public class OBEController : MonoBehaviour {
 			if ((auxQ2.w != plugin.QuaternionRight.w) || (auxQ2.x != plugin.QuaternionRight.x) ||
 			  (auxQ2.y != plugin.QuaternionRight.y) || (auxQ2.z != plugin.QuaternionRight.z)) {
 				obeCube2.transform.rotation = O2 * plugin.QuaternionRight;
-				//obeCube.transform.rotation *= plugin.QuaternionLeft;
-				//obeCube.transform.rotation = q22 * plugin.QuaternionLeft;
+
+				//printQuaternion(plugin.QuaternionLeft.eulerAngles.x, plugin.QuaternionLeft.eulerAngles.y,
+				//	plugin.QuaternionLeft.eulerAngles.z,0,0);
+			}
+
+			if ((auxQ3.w != plugin.QuaternionCenter.w) || (auxQ3.x != plugin.QuaternionCenter.x) ||
+				(auxQ3.y != plugin.QuaternionCenter.y) || (auxQ3.z != plugin.QuaternionCenter.z)) {
+				obeCube3.transform.rotation = O3 * plugin.QuaternionCenter;
 
 				//printQuaternion(plugin.QuaternionLeft.eulerAngles.x, plugin.QuaternionLeft.eulerAngles.y,
 				//	plugin.QuaternionLeft.eulerAngles.z,0,0);
@@ -127,7 +129,9 @@ public class OBEController : MonoBehaviour {
 
 			auxQ = plugin.QuaternionLeft;
 			auxQ2 = plugin.QuaternionRight;
+			auxQ3 = plugin.QuaternionCenter;
 
+			// The following code was made to show whether a button is pressed or not
 			shouldUpdate = !shouldUpdate;
 			if (shouldUpdate) {
 

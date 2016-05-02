@@ -39,13 +39,13 @@ public class OBEPlugin {
 	public float OBEMotor1, OBEMotor2, OBEMotor3, OBEMotor4;
 	private float OBEMotor1_old, OBEMotor2_old, OBEMotor3_old, OBEMotor4_old;
 
-	public delegate void QuaternionCallbackDelegate(float w, float x, float y, float z, int identifier);
+	/*public delegate void QuaternionCallbackDelegate(float w, float x, float y, float z, int identifier);
 	public delegate void FoundOBECallbackDelegate (IntPtr obeName, int index);
 	public delegate void DidConnectOBECallbackDelegate (IntPtr obeName);
 	public delegate void DidFindOBEServiceDelegate (IntPtr obeService);
 	public delegate void DidFindOBECharacteristicDelegate (IntPtr obeCharacteristic);
 
-	public OBEPluginCallback callback;
+	public OBEPluginCallback callback;*/
 
 	#if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX || UNITY_IOS
 
@@ -58,19 +58,14 @@ public class OBEPlugin {
 	/*
 	[DllImport ("OBEPlugin_OSX")]
 	public static extern void QuaternionUpdated ([MarshalAs(UnmanagedType.FunctionPtr)]QuaternionCallbackDelegate callbackMethod);
-
 	//[DllImport ("OBEPlugin_OSX")]
 	//public static extern void QuaternionUpdated_Right ([MarshalAs(UnmanagedType.FunctionPtr)]QuaternionCallbackDelegate callbackMethod);
-
 	[DllImport ("OBEPlugin_OSX")]
 	public static extern void FoundOBE ([MarshalAs(UnmanagedType.FunctionPtr)]FoundOBECallbackDelegate callbackMethod);
-
 	[DllImport ("OBEPlugin_OSX")]
 	public static extern void OBEConnected ([MarshalAs(UnmanagedType.FunctionPtr)]DidConnectOBECallbackDelegate callbackMethod);
-
 	[DllImport ("OBEPlugin_OSX")]
 	public static extern void FoundOBEService ([MarshalAs(UnmanagedType.FunctionPtr)]DidFindOBEServiceDelegate callbackMethod);
-
 	[DllImport ("OBEPlugin_OSX")]
 	public static extern void FoundOBECharacteristic ([MarshalAs(UnmanagedType.FunctionPtr)]DidFindOBECharacteristicDelegate callbackMethod);
 	*/
@@ -172,6 +167,13 @@ public class OBEPlugin {
 			mxRight = getMX (OBEQuaternionRight); myRight = getMY (OBEQuaternionRight);
 			mzRight = getMZ (OBEQuaternionRight);
 
+			axCenter = getAX (OBEQuaternionCenter); ayCenter = getAY (OBEQuaternionCenter);
+			azCenter = getAZ (OBEQuaternionCenter);
+			gxCenter = getGX (OBEQuaternionCenter); gyCenter = getGY (OBEQuaternionCenter);
+			gzCenter = getGZ (OBEQuaternionCenter);
+			mxCenter = getMX (OBEQuaternionCenter); myCenter = getMY (OBEQuaternionCenter);
+			mzCenter = getMZ (OBEQuaternionCenter);
+
 			buttons = getButtons ();
 			#elif UNITY_ANDROID
 			axLeft = obeJava.Call<float>("getAX", OBEQuaternionLeft); 
@@ -205,8 +207,8 @@ public class OBEPlugin {
 			button4 = ((buttons & 0x08) > 0) ? true : false;
 			//Debug.Log (button1.ToString() + button2.ToString() + button3.ToString() + button4.ToString());
 
-			float rollLeftAux = calculateRoll (-1.0f * azLeft, axLeft);
-			float pitchLeftAux = -1.0f * calculatePitch (ayLeft, axLeft, -1.0f * azLeft);
+			float rollLeftAux = OBEMath.calculateRoll (-1.0f * azLeft, axLeft);
+			float pitchLeftAux = -1.0f * OBEMath.calculatePitch (ayLeft, axLeft, -1.0f * azLeft);
 			rollLeft = alpha * rollLeftAux + (1.0f - alpha) * rollLeft;
 			pitchLeft = alpha * pitchLeftAux + (1.0f - alpha) * pitchLeft;
 
@@ -220,8 +222,8 @@ public class OBEPlugin {
 			//rollLeft = calculateRoll (azLeft, -1.0f * axLeft);
 			//pitchLeft = -1.0f * calculatePitch (ayLeft, axLeft, azLeft);
 
-			float rollRightAux = calculateRoll (azRight, -1.0f * axRight);
-			float pitchRightAux = -1.0f * calculatePitch (ayRight, axRight, azRight);
+			float rollRightAux = OBEMath.calculateRoll (azRight, -1.0f * axRight);
+			float pitchRightAux = -1.0f * OBEMath.calculatePitch (ayRight, axRight, azRight);
 			rollRight = alpha * rollRightAux + (1.0f - alpha) * rollRight;
 			pitchRight = alpha * pitchRightAux + (1.0f - alpha) * pitchRight;
 
@@ -230,6 +232,18 @@ public class OBEPlugin {
 			//+ ", Roll: " + rollRight.ToString());
 
 			calculateQuaternion (pitchRight, rollRight, 0.0f, OBEQuaternionRight);
+
+
+			float rollCenterAux = OBEMath.calculateRoll (azCenter, -1.0f * axCenter);
+			float pitchCenterAux = -1.0f * OBEMath.calculatePitch (ayCenter, axCenter, azCenter);
+			rollCenter = alpha * rollCenterAux + (1.0f - alpha) * rollCenter;
+			pitchCenter = alpha * pitchCenterAux + (1.0f - alpha) * pitchCenter;
+
+			//Debug.Log (axLeft.ToString() + "," + ayLeft.ToString() + "," + azLeft.ToString());
+			//Debug.Log ("Pitch " + pitchRight.ToString() 
+			//+ ", Roll: " + rollRight.ToString());
+
+			calculateQuaternion (pitchCenter, rollCenter, 0.0f, OBEQuaternionCenter);
 
 			/*w = getQW (OBEQuaternionLeft); x = getQX (OBEQuaternionLeft);
 			y = getQY (OBEQuaternionLeft); z = getQZ (OBEQuaternionLeft);
@@ -384,84 +398,5 @@ public class OBEPlugin {
 		}
 	}
 
-	/*******************************************************************************
-	* Function Name: calculatePitch()
-	********************************************************************************
-	*   
-	*   Summary:    This function calculates a Nerv's pitch. Integer to float is
-	*               recommended and employed to keep data resolution.
-	*   Parameters: ax  - x axis accelerometer value as a int16
-	*               ay  - y axis accelerometer value as a int16
-	*               az  - z axis accelerometer value as a int16
-	*   Return:     The calculated pitch expressed in radians, as a float value 
-	*
-	*   TODO:       Optimise function
-	*
-	********************************************************************************/
-	private float calculatePitch(float ax, float ay, float az){
-		float localPitch = 0.0f, squareResult = 0.0f;
 
-		squareResult = Mathf.Sqrt(ay * ay + az * az);
-		localPitch = Mathf.Atan2(-ax, squareResult); // pitch in radians
-		//localPitch = localPitch * 57.2957f; // pitch in degrees
-
-		return localPitch;
-	}
-
-	/*******************************************************************************
-	* Function Name: calculateRoll()
-	********************************************************************************
-	*   
-	*   Summary:    This function calculates a Nerv's roll. Integer to float is
-	*               recommended and employed to keep data resolution.
-	*   Parameters: ay  - y axis accelerometer value as a int16
-	*               az  - z axis accelerometer value as a int16
-	*   Return:     The calculated roll expressed in radians, as a float value 
-	*
-	*   TODO:       Optimise function
-	*
-	********************************************************************************/
-	private float calculateRoll(float ay, float az){
-		float localRoll = 0.0f;
-
-		localRoll = Mathf.Atan2(ay, az); // roll in radians
-		//localRoll = localRoll * 57.2957f; // roll in degrees
-
-		return localRoll;
-	}
-
-	/*******************************************************************************
-	* Function Name: calculateYaw()
-	********************************************************************************
-	*   
-	*   Summary:    This function calculates a Nerv's yaw. Integer to float is
-	*               recommended and employed to keep data resolution.
-	*   Parameters: roll    - roll expressed in radians, as a float value
-	pitch   - pitch expressed in radians, as a float value
-	*               mx      - x axis magnetometer value as a int16
-	*               my      - y axis magnetometer value as a int16
-	*               mz      - z axis magnetometer value as a int16
-	*   Return:     The calculated yaw expressed in radians, as a float value 
-	*
-	*   TODO:       Optimise function
-	*
-	********************************************************************************/
-	private float calculateYaw(float roll, float pitch, float mx, float my,
-		float mz){
-		float localYaw = 0.0f, upper = 0.0f, lower = 0.0f, sinRoll = 0.0f, cosRoll = 0.0f, 
-			sinPitch = 0.0f, cosPitch = 0.0f;
-
-		sinRoll = Mathf.Sin(roll);
-		cosRoll = Mathf.Cos(roll); // / 57.2957f
-		sinPitch = Mathf.Sin(pitch);
-		cosPitch = Mathf.Cos(pitch);
-
-		upper = mz * sinRoll - my * cosRoll;
-		lower = mx * cosPitch + my * sinPitch * sinRoll + 
-			mz * sinPitch * cosRoll;
-		localYaw = Mathf.Atan2(upper, lower); // yaw in radians
-		//localYaw = localYaw * 57.2957f; // yaw in angles
-
-		return localYaw;
-	}
 }
