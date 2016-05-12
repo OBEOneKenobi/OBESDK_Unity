@@ -1,9 +1,9 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/OBEPlugin.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/OBEController.cs">
     <Files>
-      <File FileName="Assets/Scripts/OBEController.cs" Line="122" Column="66" />
-      <File FileName="Assets/Scripts/OBEPlugin.cs" Line="241" Column="4" />
+      <File FileName="Assets/Scripts/OBEController.cs" Line="241" Column="4" />
+      <File FileName="Assets/Scripts/OBEPlugin.cs" Line="194" Column="52" />
       <File FileName="Assets/Scripts/OBEMath.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>

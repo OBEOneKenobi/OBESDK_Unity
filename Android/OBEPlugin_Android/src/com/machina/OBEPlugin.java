@@ -24,12 +24,14 @@ public class OBEPlugin {
 	//TODO: Right and Center missing the right characteristic
 	private static String QuaternionCharacteristic = "0003cbb2-0000-1000-8000-00805f9b0131";
 	private static String HapticCharacteristic = "0003cbb1-0000-1000-8000-00805f9b0131";
+	private static String BatteryCharacteristic = "00002a19-0000-1000-8000-00805f9b34fb";
 	
 	private static int QuaternionLeft = 0;
 	private static int QuaternionRight = 1;
 	private static int QuaternionCenter = 2;
 	private static int MPUDataSize = 20;
 	private static int HapticDataSize = 7;
+	private static int BatteryDataSize = 1;
 	
     private Context context;
     private static OBEPlugin instance;
@@ -48,7 +50,9 @@ public class OBEPlugin {
     private float gxCenter, gyCenter, gzCenter;
     private float mxCenter, myCenter, mzCenter;
     private int Buttons;
+    private int LeftButtons, RightButtons, LogoButtons;
     private float Motor1, Motor2, Motor3, Motor4;
+    private float BatteryLevel;
     
     //BluetoothGattCharacteristic correct_characteristic;
     BluetoothGattCharacteristic write_characteristic;
@@ -127,6 +131,10 @@ public class OBEPlugin {
     public int getStatus()
     {
         return state;
+    }
+    
+    public float getBattery(){
+    	return BatteryLevel;
     }
     
     public float getAX(int identifier){
@@ -273,8 +281,25 @@ public class OBEPlugin {
     	return result;
     }
     
-    public int getButtons(){
+    /*public int getButtons(){
     	return Buttons;
+    }*/
+    
+    // TODO: check if the following function truly works
+    public int getButtons(int identifier){
+    	int result = 0;
+    	switch(identifier){
+    		case 0: // QuaternionLeft
+    			result = LeftButtons;
+    			break;
+    		case 1: // QuaternionRight
+    			result = RightButtons;
+    			break;
+    		case 2: // QuaternionCenter
+    			result = LogoButtons;
+    			break;
+    	}
+    	return result;
     }
     
     public void setMotors(float motor1, float motor2, float motor3, float motor4){
@@ -366,6 +391,22 @@ public class OBEPlugin {
         					//Log.i("Notification status", "Not enabled");
         				}
         			}
+        			else if(uuid.startsWith(BatteryCharacteristic)){
+                        //Log.i("Battery Char", "Found");
+                        // ENABLE NOTIFICATION
+                        BluetoothGattCharacteristic characteristic = gattCharacteristic;
+                        mBluetoothGatt.setCharacteristicNotification(characteristic, true);
+                        BluetoothGattDescriptor localBluetoothGattDescriptor =
+                        		characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"));
+
+                        if(localBluetoothGattDescriptor != null) {
+                            localBluetoothGattDescriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                            mBluetoothGatt.writeDescriptor(localBluetoothGattDescriptor);
+                            //Log.i("Notification status", "Enabled");
+                        } else {
+                            //Log.i("Notification status", "Not enabled");
+                        }
+                    }
         			//OBE-Haptics Characteristic
         			else if(uuid.startsWith(HapticCharacteristic)){
         				write_characteristic = gattCharacteristic;
@@ -425,27 +466,43 @@ public class OBEPlugin {
     		}*/
         	
         	byte[] arrayOfByte = characteristic.getValue();
-        	if(arrayOfByte.length == MPUDataSize){
-        		//completePacket = arrayOfByte;
-        		
-        		int aux = arrayOfByte[MPUDataSize - 2];
-        		bufferToFloat(arrayOfByte, aux);
-        		if(aux == QuaternionCenter){
-        			Buttons = arrayOfByte[19] & 0xFF;
+        	
+        	if(characteristic.getUuid().toString().startsWith(QuaternionCharacteristic)){
+        		if(arrayOfByte.length == MPUDataSize){
+            		//completePacket = arrayOfByte;
+            		
+            		int aux = arrayOfByte[MPUDataSize - 2];
+            		bufferToFloat(arrayOfByte, aux);
+            		if(aux == QuaternionCenter){
+            			LogoButtons = arrayOfByte[19] & 0xFF;
+            			//Buttons = LogoButtons; // keep compatibility with OBE oldest firmware
+            		}else if(aux == QuaternionLeft){
+            			LeftButtons = arrayOfByte[19] & 0xFF;
+            		}else if(aux == QuaternionRight){
+            			RightButtons = arrayOfByte[19] & 0xFF;
+            		}
+            		
+            		// Convert bytes to floats
+            		/*float w = ByteBuffer.wrap(arrayOfByte, 0, 4).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+            		float x = ByteBuffer.wrap(arrayOfByte, 4, 4).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+            		float y = ByteBuffer.wrap(arrayOfByte, 8, 4).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+            		float z = ByteBuffer.wrap(arrayOfByte, 12, 4).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+            		
+            		String uuid = characteristic.getUuid().toString();
+            		
+            		// Notify callback that a Quaternion has been updated
+            		if(uuid.equals(QuaternionCharacteristic_Left)){
+            			callback.onQuaternionUpdated(w, x, y, z, Quaternion_Left);
+            		}*/
+            	}
+        	}else if(characteristic.getUuid().toString().startsWith(BatteryCharacteristic)){
+        		if(arrayOfByte.length == BatteryDataSize){
+        			int aux = (int)(arrayOfByte[0] & 0xFF);
+        			
+        			float auxFloat = ((float)aux) / 100.0f;
+        			// Update Battery
+        			BatteryLevel = auxFloat;
         		}
-        		
-        		// Convert bytes to floats
-        		/*float w = ByteBuffer.wrap(arrayOfByte, 0, 4).order(ByteOrder.LITTLE_ENDIAN).getFloat();
-        		float x = ByteBuffer.wrap(arrayOfByte, 4, 4).order(ByteOrder.LITTLE_ENDIAN).getFloat();
-        		float y = ByteBuffer.wrap(arrayOfByte, 8, 4).order(ByteOrder.LITTLE_ENDIAN).getFloat();
-        		float z = ByteBuffer.wrap(arrayOfByte, 12, 4).order(ByteOrder.LITTLE_ENDIAN).getFloat();
-        		
-        		String uuid = characteristic.getUuid().toString();
-        		
-        		// Notify callback that a Quaternion has been updated
-        		if(uuid.equals(QuaternionCharacteristic_Left)){
-        			callback.onQuaternionUpdated(w, x, y, z, Quaternion_Left);
-        		}*/
         	}
 
             /*String str = "a";

@@ -44,7 +44,10 @@
 
 @property float Motor1, Motor2, Motor3, Motor4;
 
+@property float BatteryLevel;
+
 @property int Buttons;
+@property int LeftButtons, RightButtons, LogoButtons;
 
 - (void) initVariables;
 - (void) startScan;

@@ -140,11 +140,38 @@ void UpdateMotors(){
     }
 }
 
-int getButtons(){
+/*int getButtons(){
     if(handler != nil){
         return handler.Buttons;
     }else{
         return 0;
+    }
+}*/
+int getButtons(int identifier){
+    if(handler != nil){
+        int result = 0;
+        switch(identifier){
+            case OBEQuaternionLeft:
+                result = handler.LeftButtons;
+                break;
+            case OBEQuaternionRight:
+                result = handler.RightButtons;
+                break;
+            case OBEQuaternionCenter: // Logo applies to Center here
+                result = handler.LogoButtons;
+                break;
+        }
+        return result;
+    }else{
+        return 0;
+    }
+}
+
+float getBattery(){
+    if(handler != nil){
+        return handler.BatteryLevel;
+    }else{
+        return -1.0f; // indicates that battery is unavailable
     }
 }
 

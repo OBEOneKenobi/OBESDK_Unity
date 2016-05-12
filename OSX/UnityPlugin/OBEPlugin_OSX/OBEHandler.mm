@@ -15,6 +15,9 @@
 #define OBEQuaternionCharacteristic_Center @"0003cbb4-0000-1000-8000-00805F9B0131"
 #define OBEHapticCharacteristic @"0003cbb1-0000-1000-8000-00805F9B0131"
 
+#define BatteryService @"180F"
+#define BatteryLevelCharacteristic @"2A19"
+
 #define OBEQuaternionLeft 0
 #define OBEQuaternionRight 1
 #define OBEQuaternionCenter 2
@@ -257,7 +260,12 @@ union {
             [aPeripheral discoverCharacteristics:nil forService:aService];
         }
         
-        /* BG Cable Replacement */
+        // Battery
+        if([aService.UUID isEqual:[CBUUID UUIDWithString:BatteryService]]){
+            [aPeripheral discoverCharacteristics:nil forService:aService];
+        }
+        
+        /* OBE */
         if([aService.UUID isEqual:[CBUUID UUIDWithString:OBEService]]){
             [aPeripheral discoverCharacteristics:nil forService:aService];
         }
@@ -300,6 +308,14 @@ union {
             //NSString *nameString = [aChar.UUID UUIDString];
             //const char *name = [nameString cStringUsingEncoding:[NSString defaultCStringEncoding]];
             //NotifyFoundOBECharacteristic(name);
+        }
+    }
+    
+    if ([service.UUID isEqual:[CBUUID UUIDWithString:BatteryService]]){
+        for (CBCharacteristic *aChar in service.characteristics){
+            if ([aChar.UUID isEqual:[CBUUID UUIDWithString:BatteryLevelCharacteristic]]){
+                [obePeripheral setNotifyValue:YES forCharacteristic:aChar];
+            }
         }
     }
     
@@ -356,7 +372,26 @@ union {
         else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:@"2A29"]]){
             //self.manufacturer = [[NSString alloc] initWithData:characteristic.value encoding:NSUTF8StringEncoding];
             //NSLog(@"Manufacturer Name = %@", self.manufacturer);
-        }else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:OBEQuaternionCharacteristic_Left]]){
+        }
+    
+        if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:BatteryLevelCharacteristic]]){
+            if([characteristic.value length] > 0){
+                //NSLog(@"Battery Length %lu", [characteristic.value length]);
+                NSData *batteryData = characteristic.value;
+                Byte *dataArray = (Byte *)malloc(sizeof(Byte) * 1);
+                [batteryData getBytes:dataArray length:1];
+            
+                // This could be optimized
+                int level = dataArray[0];
+                float flevel = level;
+                flevel /= 100.0f;
+                
+                _BatteryLevel = flevel;
+            
+                free(dataArray);
+            }
+        }
+        else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:OBEQuaternionCharacteristic_Left]]){
             
             NSData *quaternion = [characteristic value];
             if([quaternion length] == OBEMPUDataSize){
@@ -371,6 +406,7 @@ union {
                 
                 if(buffer[18] == OBEQuaternionCenter){
                     _Buttons = buffer[19] & 0xFF;
+                    _LogoButtons = _Buttons;
                     if(shouldUpdateMotor){
                         if(hasFinishedUpdate){
                             hasFinishedUpdate = NO;
@@ -378,6 +414,10 @@ union {
                             [self motorUpdate];
                         }
                     }
+                }else if(buffer[18] == OBEQuaternionLeft){
+                    _LeftButtons = buffer[19] & 0xFF;
+                }else if(buffer[18] == OBEQuaternionRight){
+                    _RightButtons = buffer[19] & 0xFF;
                 }
                 
                 //[self assignFloatQuaternion:OBEQuaternionLeft];

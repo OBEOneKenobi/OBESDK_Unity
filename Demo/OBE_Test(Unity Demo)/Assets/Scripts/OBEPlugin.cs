@@ -23,6 +23,9 @@ public class OBEPlugin {
 	public Quaternion QuaternionLeft;
 
 	public Boolean button1, button2, button3, button4;
+	public Boolean LeftButton1, LeftButton2, LeftButton3, LeftButton4;
+	public Boolean RightButton1, RightButton2, RightButton3, RightButton4;
+	public Boolean LogoButton;
 
 	public float axRight, ayRight, azRight;
 	public float gxRight, gyRight, gzRight;
@@ -38,6 +41,8 @@ public class OBEPlugin {
 
 	public float OBEMotor1, OBEMotor2, OBEMotor3, OBEMotor4;
 	private float OBEMotor1_old, OBEMotor2_old, OBEMotor3_old, OBEMotor4_old;
+
+	public float BatteryLevel;
 
 	/*public delegate void QuaternionCallbackDelegate(float w, float x, float y, float z, int identifier);
 	public delegate void FoundOBECallbackDelegate (IntPtr obeName, int index);
@@ -95,8 +100,12 @@ public class OBEPlugin {
 	[DllImport (pluginName)]
 	public static extern void setMotor4(float speed);
 
+	//[DllImport (pluginName)]
+	//public static extern int getButtons();
 	[DllImport (pluginName)]
-	public static extern int getButtons();
+	public static extern int getButtons(int identifier); //TODO: implement this function in iOS
+	[DllImport (pluginName)]
+	public static extern int getBattery();
 	[DllImport (pluginName)]
 	public static extern float getQW(int identifier);
 	[DllImport (pluginName)]
@@ -145,10 +154,15 @@ public class OBEPlugin {
 	#endif
 
 	public void fetch(){
+
+		int auxLeftButtons = 0, auxRightButtons, auxLogoButtons = 0;
+
 		#if UNITY_IOS || UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
 		if (isConnected () == 1) {
 		#elif UNITY_ANDROID
-		
+
+
+
 		#endif
 			//isScanning = false;
 			int buttons;
@@ -174,7 +188,13 @@ public class OBEPlugin {
 			mxCenter = getMX (OBEQuaternionCenter); myCenter = getMY (OBEQuaternionCenter);
 			mzCenter = getMZ (OBEQuaternionCenter);
 
-			buttons = getButtons ();
+			//buttons = getButtons ();
+			auxLeftButtons = getButtons(OBEQuaternionLeft);
+			auxRightButtons = getButtons(OBEQuaternionRight);
+			auxLogoButtons = getButtons(OBEQuaternionCenter); // Center applies to Logo in this case
+
+			BatteryLevel = getBattery();
+
 			#elif UNITY_ANDROID
 			axLeft = obeJava.Call<float>("getAX", OBEQuaternionLeft); 
 			ayLeft = obeJava.Call<float>("getAY", OBEQuaternionLeft);
@@ -196,15 +216,22 @@ public class OBEPlugin {
 			myRight = obeJava.Call<float>("getMY", OBEQuaternionRight);
 			mzRight = obeJava.Call<float>("getMZ", OBEQuaternionRight);*/
 
-			buttons = obeJava.Call<int>("getButtons");
+			//buttons = obeJava.Call<int>("getButtons");
+			auxLeftButtons = obeJava.Call<int>("getButtons", OBEQuaternionLeft);
+			auxRightButtons = obeJava.Call<int>("getButtons", OBEQuaternionRight);
+			auxLogoButtons = obeJava.Call<int>("getButtons", OBEQuaternionCenter); // Center applies to Logo in this case
 			#endif
+
+			parseButtons (auxLeftButtons, OBEQuaternionLeft);
+			parseButtons (auxRightButtons, OBEQuaternionRight);
+			parseButtons (auxLogoButtons, OBEQuaternionCenter); // Center applies to Logo in this case
+			/*button1 = ((buttons & 0x01) > 0) ? true : false;
+			button2 = ((buttons & 0x02) > 0) ? true : false;
+			button3 = ((buttons & 0x04) > 0) ? true : false;
+			button4 = ((buttons & 0x08) > 0) ? true : false;*/
 
 			//Debug.Log (axLeft.ToString() + "," + ayLeft.ToString() + "," + azLeft.ToString());
 			//Debug.Log (buttons.ToString ());
-			button1 = ((buttons & 0x01) > 0) ? true : false;
-			button2 = ((buttons & 0x02) > 0) ? true : false;
-			button3 = ((buttons & 0x04) > 0) ? true : false;
-			button4 = ((buttons & 0x08) > 0) ? true : false;
 			//Debug.Log (button1.ToString() + button2.ToString() + button3.ToString() + button4.ToString());
 
 			float rollLeftAux = OBEMath.calculateRoll (-1.0f * azLeft, axLeft);
@@ -367,6 +394,32 @@ public class OBEPlugin {
 
 	abstract public void FoundOBECharacteristic (string characteristicName);
 	*/
+
+	private void parseButtons(int button, int identifier){
+
+		Boolean auxbutton1 = ((button & 0x01) > 0) ? true : false;
+		Boolean auxbutton2 = ((button & 0x02) > 0) ? true : false;
+		Boolean auxbutton3 = ((button & 0x04) > 0) ? true : false;
+		Boolean auxbutton4 = ((button & 0x08) > 0) ? true : false;
+
+		switch (identifier) {
+			case 0:
+				LeftButton1 = auxbutton1;
+				LeftButton2 = auxbutton2;
+				LeftButton3 = auxbutton3;
+				LeftButton4 = auxbutton4;
+				break;
+			case 1:
+				RightButton1 = auxbutton1;
+				RightButton2 = auxbutton2;
+				RightButton3 = auxbutton3;
+				RightButton4 = auxbutton4;
+				break;
+			case 2:
+				LogoButton = auxbutton1;
+				break;
+		}
+	}
 
 	private void calculateQuaternion(float roll, float pitch, float yaw, int identifier){
 		float sinHalfYaw = Mathf.Sin(yaw / 2.0f);

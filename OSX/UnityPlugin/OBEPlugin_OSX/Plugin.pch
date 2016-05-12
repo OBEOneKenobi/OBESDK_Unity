@@ -53,7 +53,10 @@ extern "C"{
     int isReadyToScan();
     void UpdateMotors();
     
-    int getButtons();
+    //int getButtons();
+    int getButtons(int identifier);
+    
+    float getBattery();
     
     float getQW(int identifier); float getQX(int identifier);
     float getQY(int identifier); float getQZ(int identifier);

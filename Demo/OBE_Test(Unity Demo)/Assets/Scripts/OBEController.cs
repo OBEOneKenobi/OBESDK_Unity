@@ -162,31 +162,82 @@ public class OBEController : MonoBehaviour {
 				plugin.updateMotors ();
 			}
 
-			if (plugin.button1) {
+			// LEFT
+			// ---------
+			//if (plugin.button1) {
+			if (plugin.LeftButton1) {
 				Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
 				rend.material.color = new Color (0.0f, 1.0f, 0.0f);
 			} else {
-				if (plugin.button2) {
+				//if (plugin.button2) {
+				if (plugin.LeftButton2) {
 					Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
 					rend.material.color = new Color (1.0f, 0.0f, 0.0f);
 				} else {
+					//if (plugin.button3) {
+					if (plugin.LeftButton3) {
+						Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
+						rend.material.color = new Color (0.0f, 0.0f, 1.0f);
+					} else {
+						//if (plugin.button4) {
+						if (plugin.LeftButton4) {
+							Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
+							rend.material.color = new Color (1.0f, 0.0f, 1.0f);
+						} else {
+							Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
+							rend.material.color = new Color (1.0f, 1.0f, 1.0f);
+						}
+					}
+					//Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
+					//rend.material.color = new Color (1.0f, 1.0f, 1.0f);
+				}
+			}
+			//if (plugin.button3) {
+			/*if (plugin.LeftButton3) {
+				Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
+				rend.material.color = new Color (0.0f, 0.0f, 1.0f);
+			} else {
+				//if (plugin.button4) {
+				if (plugin.LeftButton4) {
+					Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
+					rend.material.color = new Color (1.0f, 0.0f, 1.0f);
+				} else {
 					Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
 					rend.material.color = new Color (1.0f, 1.0f, 1.0f);
 				}
-			}
+			}*/
+			//---------
 
-			if (plugin.button3) {
+			//if (plugin.button1) {
+			if (plugin.RightButton1) {
 				Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
-				rend.material.color = new Color (0.0f, 0.0f, 1.0f);
+				rend.material.color = new Color (0.0f, 1.0f, 0.0f);
 			} else {
-				if (plugin.button4) {
+				//if (plugin.button2) {
+				if (plugin.RightButton2) {
 					Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
-					rend.material.color = new Color (1.0f, 0.0f, 1.0f);
+					rend.material.color = new Color (1.0f, 0.0f, 0.0f);
 				} else {
-					Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
-					rend.material.color = new Color (1.0f, 1.0f, 1.0f);
+					//Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
+					//rend.material.color = new Color (1.0f, 1.0f, 1.0f);
+					//if (plugin.button3) {
+					if (plugin.RightButton3) {
+						Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
+						rend.material.color = new Color (0.0f, 0.0f, 1.0f);
+					} else {
+						//if (plugin.button4) {
+						if (plugin.RightButton4) {
+							Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
+							rend.material.color = new Color (1.0f, 0.0f, 1.0f);
+						} else {
+							Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
+							rend.material.color = new Color (1.0f, 1.0f, 1.0f);
+						}
+					}
 				}
 			}
+
+			// Update Battery
 
 		}
 
