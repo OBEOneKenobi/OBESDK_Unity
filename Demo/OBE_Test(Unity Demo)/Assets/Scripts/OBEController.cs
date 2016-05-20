@@ -2,6 +2,8 @@
 using System;
 using System.Collections;
 using System.Runtime.InteropServices;
+using UnityOSC;
+using System.Collections.Generic;
 
 public class OBEController : MonoBehaviour {
 
@@ -15,9 +17,13 @@ public class OBEController : MonoBehaviour {
 
 	private Boolean shouldUpdate = false;
 
-	//private OBE obe;
-	private OBEPlugin plugin;
+	private string address;
+
 	private Quaternion auxQ, auxQ2, auxQ3, O1, O2, O3;
+	private long testCounter;
+
+	public String up = "off", down = "off", 
+		left = "off", right = "off", attack = "off";
 
 	void Awake() {
 		Application.targetFrameRate = 24;
@@ -56,17 +62,6 @@ public class OBEController : MonoBehaviour {
 			//Debug.Log("Service Characteristic: " + name);
 		});
 */
-		//plugin.setCallback (this);
-
-		//plugin.startScanning ();
-
-
-		//obe = new OBE ();
-		//obe.init (this);
-		//obe.startScanning ();
-
-		//init ();
-		//startScanning ();
 
 		auxQ = new Quaternion (0,0,0,1);
 		auxQ2 = new Quaternion (0,0,0,1);
@@ -76,6 +71,8 @@ public class OBEController : MonoBehaviour {
 		O2 = obeCube2.transform.rotation;
 		O3 = obeCube3.transform.rotation;
 
+		OSCHandler.Instance.Init();
+
 		Invoke ("startOBE", 1.0f); // start function 1 second after
 
 		//Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer>();
@@ -83,150 +80,147 @@ public class OBEController : MonoBehaviour {
 	}
 
 	void startOBE(){
-		if (plugin == null) {
-			plugin = new OBEPlugin ();
-			plugin.init ();
-		}
+		OBEPlugin.Instance.init();
 	}
 
 	// Update is called once per frame
 	void Update () {
-		//rotateCube (W,X,Y,Z);
 
-		if (plugin != null) {
+		if (OBEPlugin.Instance.isInitiated) {
+
+			// TODO: in order to read, it's necessary to pass data from
+			// 		 handler to this class...
+
 			// try to connect to the first OBE that's nearby
 			// if an OBE is connected, the following line does nothing
-			plugin.connectToOBE (0);
+			OBEPlugin.Instance.connectToOBE (0);
 
 			// fetch current data sent from OBE
-			plugin.fetch ();
+			OBEPlugin.Instance.fetch ();
 
 			//Debug.Log (plugin.bleState.ToString());
 
-			if ((auxQ.w != plugin.QuaternionLeft.w) || (auxQ.x != plugin.QuaternionLeft.x) ||
-			  (auxQ.y != plugin.QuaternionLeft.y) || (auxQ.z != plugin.QuaternionLeft.z)) {
-				obeCube.transform.rotation = O1 * plugin.QuaternionLeft;
+			if ((auxQ.w != OBEPlugin.Instance.QuaternionLeft.w) || (auxQ.x != OBEPlugin.Instance.QuaternionLeft.x) ||
+				(auxQ.y != OBEPlugin.Instance.QuaternionLeft.y) || (auxQ.z != OBEPlugin.Instance.QuaternionLeft.z)) {
+				obeCube.transform.rotation = O1 * OBEPlugin.Instance.QuaternionLeft;
 
 				//printQuaternion(plugin.QuaternionLeft.eulerAngles.x, plugin.QuaternionLeft.eulerAngles.y,
 				//	plugin.QuaternionLeft.eulerAngles.z,0,0);
 			}
 
-			if ((auxQ2.w != plugin.QuaternionRight.w) || (auxQ2.x != plugin.QuaternionRight.x) ||
-			  (auxQ2.y != plugin.QuaternionRight.y) || (auxQ2.z != plugin.QuaternionRight.z)) {
-				obeCube2.transform.rotation = O2 * plugin.QuaternionRight;
+			if ((auxQ2.w != OBEPlugin.Instance.QuaternionRight.w) || (auxQ2.x != OBEPlugin.Instance.QuaternionRight.x) ||
+				(auxQ2.y != OBEPlugin.Instance.QuaternionRight.y) || (auxQ2.z != OBEPlugin.Instance.QuaternionRight.z)) {
+				obeCube2.transform.rotation = O2 * OBEPlugin.Instance.QuaternionRight;
 
 				//printQuaternion(plugin.QuaternionLeft.eulerAngles.x, plugin.QuaternionLeft.eulerAngles.y,
 				//	plugin.QuaternionLeft.eulerAngles.z,0,0);
 			}
 
-			if ((auxQ3.w != plugin.QuaternionCenter.w) || (auxQ3.x != plugin.QuaternionCenter.x) ||
-				(auxQ3.y != plugin.QuaternionCenter.y) || (auxQ3.z != plugin.QuaternionCenter.z)) {
-				obeCube3.transform.rotation = O3 * plugin.QuaternionCenter;
+			if ((auxQ3.w != OBEPlugin.Instance.QuaternionCenter.w) || (auxQ3.x != OBEPlugin.Instance.QuaternionCenter.x) ||
+				(auxQ3.y != OBEPlugin.Instance.QuaternionCenter.y) || (auxQ3.z != OBEPlugin.Instance.QuaternionCenter.z)) {
+				obeCube3.transform.rotation = O3 * OBEPlugin.Instance.QuaternionCenter;
 
 				//printQuaternion(plugin.QuaternionLeft.eulerAngles.x, plugin.QuaternionLeft.eulerAngles.y,
 				//	plugin.QuaternionLeft.eulerAngles.z,0,0);
 			}
 
-			auxQ = plugin.QuaternionLeft;
-			auxQ2 = plugin.QuaternionRight;
-			auxQ3 = plugin.QuaternionCenter;
+			auxQ = OBEPlugin.Instance.QuaternionLeft;
+			auxQ2 = OBEPlugin.Instance.QuaternionRight;
+			auxQ3 = OBEPlugin.Instance.QuaternionCenter;
 
 			// The following code was made to show whether a button is pressed or not
 			shouldUpdate = !shouldUpdate;
 			if (shouldUpdate) {
 
 				if (Input.GetKey (KeyCode.A)) {
-					plugin.OBEMotor1 = 1.0f;
+					OBEPlugin.Instance.OBEMotor1 = 1.0f;
 				} else {
-					plugin.OBEMotor1 = 0.0f;
+					OBEPlugin.Instance.OBEMotor1 = 0.0f;
 				}
 
 				if (Input.GetKey (KeyCode.S)) {
-					plugin.OBEMotor2 = 1.0f;
+					OBEPlugin.Instance.OBEMotor2 = 1.0f;
 				} else {
-					plugin.OBEMotor2 = 0.0f;
+					OBEPlugin.Instance.OBEMotor2 = 0.0f;
 				}
 
 				if (Input.GetKey (KeyCode.D)) {
-					plugin.OBEMotor3 = 1.0f;
+					OBEPlugin.Instance.OBEMotor3 = 1.0f;
 				} else {
-					plugin.OBEMotor3 = 0.0f;
+					OBEPlugin.Instance.OBEMotor3 = 0.0f;
 				}
 
 				if (Input.GetKey (KeyCode.W)) {
-					plugin.OBEMotor4 = 1.0f;
+					OBEPlugin.Instance.OBEMotor4 = 1.0f;
 				} else {
-					plugin.OBEMotor4 = 0.0f;
+					OBEPlugin.Instance.OBEMotor4 = 0.0f;
 				}
+
+				// OSC detection
+				if (OSCHandler.Instance.shouldVibrate) {
+					OBEPlugin.Instance.OBEMotor1 = 1.0f; OBEPlugin.Instance.OBEMotor2 = 1.0f;
+					OBEPlugin.Instance.OBEMotor3 = 1.0f; OBEPlugin.Instance.OBEMotor4 = 1.0f;
+				} else {
+					OBEPlugin.Instance.OBEMotor1 = 0.0f; OBEPlugin.Instance.OBEMotor2 = 0.0f;
+					OBEPlugin.Instance.OBEMotor3 = 0.0f; OBEPlugin.Instance.OBEMotor4 = 0.0f;
+				}
+
 				//Debug.Log (plugin.OBEMotor1.ToString());
-				plugin.updateMotors ();
+				OBEPlugin.Instance.updateMotors ();
 			}
 
 			// LEFT
 			// ---------
-			//if (plugin.button1) {
-			if (plugin.LeftButton1) {
+			if (OBEPlugin.Instance.LeftButton1) {
 				Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
 				rend.material.color = new Color (0.0f, 1.0f, 0.0f);
+
+				up = "on"; down = "off"; left = "off"; right = "off";
 			} else {
-				//if (plugin.button2) {
-				if (plugin.LeftButton2) {
+				if (OBEPlugin.Instance.LeftButton2) {
 					Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
 					rend.material.color = new Color (1.0f, 0.0f, 0.0f);
+
+					up = "off"; down = "on"; left = "off"; right = "off";
 				} else {
-					//if (plugin.button3) {
-					if (plugin.LeftButton3) {
+					if (OBEPlugin.Instance.LeftButton3) {
 						Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
 						rend.material.color = new Color (0.0f, 0.0f, 1.0f);
+
+						up = "off"; down = "off"; left = "on"; right = "off";
 					} else {
-						//if (plugin.button4) {
-						if (plugin.LeftButton4) {
+						if (OBEPlugin.Instance.LeftButton4) {
 							Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
 							rend.material.color = new Color (1.0f, 0.0f, 1.0f);
+
+							up = "off"; down = "off"; left = "off"; right = "on";
 						} else {
 							Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
 							rend.material.color = new Color (1.0f, 1.0f, 1.0f);
+
+							up = "off"; down = "off"; left = "off"; right = "off";
 						}
 					}
-					//Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
-					//rend.material.color = new Color (1.0f, 1.0f, 1.0f);
 				}
 			}
-			//if (plugin.button3) {
-			/*if (plugin.LeftButton3) {
-				Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
-				rend.material.color = new Color (0.0f, 0.0f, 1.0f);
-			} else {
-				//if (plugin.button4) {
-				if (plugin.LeftButton4) {
-					Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
-					rend.material.color = new Color (1.0f, 0.0f, 1.0f);
-				} else {
-					Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
-					rend.material.color = new Color (1.0f, 1.0f, 1.0f);
-				}
-			}*/
-			//---------
-
-			//if (plugin.button1) {
-			if (plugin.RightButton1) {
+				
+			if (OBEPlugin.Instance.RightButton1) {
 				Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
 				rend.material.color = new Color (0.0f, 1.0f, 0.0f);
+
+				attack = "on";
 			} else {
-				//if (plugin.button2) {
-				if (plugin.RightButton2) {
+
+				attack = "off";
+				if (OBEPlugin.Instance.RightButton2) {
 					Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
 					rend.material.color = new Color (1.0f, 0.0f, 0.0f);
 				} else {
-					//Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
-					//rend.material.color = new Color (1.0f, 1.0f, 1.0f);
-					//if (plugin.button3) {
-					if (plugin.RightButton3) {
+					if (OBEPlugin.Instance.RightButton3) {
 						Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
 						rend.material.color = new Color (0.0f, 0.0f, 1.0f);
 					} else {
-						//if (plugin.button4) {
-						if (plugin.RightButton4) {
+						if (OBEPlugin.Instance.RightButton4) {
 							Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
 							rend.material.color = new Color (1.0f, 0.0f, 1.0f);
 						} else {
@@ -238,6 +232,10 @@ public class OBEController : MonoBehaviour {
 			}
 
 			// Update Battery
+
+			address = up + "," + down + "," + left + "," + right + "," + attack;
+			OSCHandler.Instance.SendMessageToClient ("mainClient", address, 1);
+
 
 		}
 
@@ -254,7 +252,6 @@ public class OBEController : MonoBehaviour {
 			"," + y.ToString() + "," + z.ToString());
 
 		W = w; X = x; Y = y; Z = z;
-		//obeCube.transform.rotation.Set (w, x, y, z);
 	}
 
 	public void rotateCube(float w, float x, float y, float z){
@@ -265,28 +262,9 @@ public class OBEController : MonoBehaviour {
 	void OnApplicationQuit(){
 		//obe.disconnect ();
 		//plugin.disconnectFromOBE();
+		OBEPlugin.Instance.disconnectFromOBE();
 		Debug.Log ("On Application Quit");
 	}
 
-	// override
-	/*
-	// Interface for receiving updated quaternions
-	public void QuaternionUpdated(float w, float x, float y, float z, int identifier){
-		Debug.Log(w.ToString() + "," + x.ToString() + "," + y.ToString() + "," + z.ToString());
-	}
 
-	public void FoundOBE(string name, int index){
-		Debug.Log("Found: " + name);
-		//obe.connect(0);
-		//connect(0);
-		plugin.connectToOBE(0);
-	}
-
-	public void FoundOBEService(string serviceName){
-		Debug.Log("Service Found: " + serviceName);
-	}
-
-	public void FoundOBECharacteristic(string characteristicName){
-		Debug.Log("Service Found: " + characteristicName);
-	}*/
 }
