@@ -281,10 +281,6 @@ public class OBEPlugin {
     	return result;
     }
     
-    /*public int getButtons(){
-    	return Buttons;
-    }*/
-    
     // TODO: check if the following function truly works
     public int getButtons(int identifier){
     	int result = 0;

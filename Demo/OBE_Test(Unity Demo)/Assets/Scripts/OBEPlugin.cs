@@ -137,20 +137,9 @@ public class OBEPlugin : MonoBehaviour{
 
 
 	#elif UNITY_ANDROID
+
 	AndroidJavaObject obeJava = null;
 	AndroidJavaObject activityContext = null;
-	/*
-	public static void QuaternionUpdated(QuaternionCallbackDelegate callbackMethod);
-
-	class OBECallback : AndroidJavaProxy
-	{
-		public OBECallback() : base("com.machina.OBECallback") { }
-
-		void onQuaternionUpdated(float w, float x, float y, float z){
-			
-		}
-
-	}*/
 
 	#endif
 
@@ -170,6 +159,17 @@ public class OBEPlugin : MonoBehaviour{
 	}
 	#endregion
 
+	/*******************************************************************************
+	* @name fetch()
+	********************************************************************************
+	*   
+	*   Summary:    This function loads all current values from the native plugin
+	* 				libraries. On iOS and OSX, this function will start if there is
+	* 				no active scanning happening in background.
+	*
+	*   @todo       Optimize function.
+	*
+	********************************************************************************/
 	public void fetch(){
 
 		int auxLeftButtons = 0, auxRightButtons, auxLogoButtons = 0;
@@ -205,6 +205,8 @@ public class OBEPlugin : MonoBehaviour{
 			mxCenter = getMX (OBEQuaternionCenter); myCenter = getMY (OBEQuaternionCenter);
 			mzCenter = getMZ (OBEQuaternionCenter);
 
+			Debug.Log(myLeft.ToString() + "," + myRight.ToString());
+
 			//buttons = getButtons ();
 			auxLeftButtons = getButtons(OBEQuaternionLeft);
 			auxRightButtons = getButtons(OBEQuaternionRight);
@@ -233,19 +235,27 @@ public class OBEPlugin : MonoBehaviour{
 			myRight = obeJava.Call<float>("getMY", OBEQuaternionRight);
 			mzRight = obeJava.Call<float>("getMZ", OBEQuaternionRight);*/
 
+			/*axCenter = obeJava.Call<float>("getAX", OBEQuaternionCenter); 
+			ayCenter = obeJava.Call<float>("getAY", OBEQuaternionCenter);
+			azCenter = obeJava.Call<float>("getAZ", OBEQuaternionCenter);
+			gxCenter = obeJava.Call<float>("getGX", OBEQuaternionCenter); 
+			gyCenter = obeJava.Call<float>("getGY", OBEQuaternionCenter);
+			gzCenter = obeJava.Call<float>("getGZ", OBEQuaternionCenter);
+			mxCenter = obeJava.Call<float>("getMX", OBEQuaternionCenter); 
+			myCenter = obeJava.Call<float>("getMY", OBEQuaternionCenter);
+			mzCenter = obeJava.Call<float>("getMZ", OBEQuaternionCenter);*/
+
 			//buttons = obeJava.Call<int>("getButtons");
 			auxLeftButtons = obeJava.Call<int>("getButtons", OBEQuaternionLeft);
 			auxRightButtons = obeJava.Call<int>("getButtons", OBEQuaternionRight);
 			auxLogoButtons = obeJava.Call<int>("getButtons", OBEQuaternionCenter); // Center applies to Logo in this case
+
+			BatteryLevel = obeJava.Call<float>("getBattery");
 			#endif
 
 			parseButtons (auxLeftButtons, OBEQuaternionLeft);
 			parseButtons (auxRightButtons, OBEQuaternionRight);
 			parseButtons (auxLogoButtons, OBEQuaternionCenter); // Center applies to Logo in this case
-			/*button1 = ((buttons & 0x01) > 0) ? true : false;
-			button2 = ((buttons & 0x02) > 0) ? true : false;
-			button3 = ((buttons & 0x04) > 0) ? true : false;
-			button4 = ((buttons & 0x08) > 0) ? true : false;*/
 
 			//Debug.Log (axLeft.ToString() + "," + ayLeft.ToString() + "," + azLeft.ToString());
 			//Debug.Log (buttons.ToString ());
@@ -315,6 +325,15 @@ public class OBEPlugin : MonoBehaviour{
 		#endif
 	}
 
+	/*******************************************************************************
+	* @name init()
+	********************************************************************************
+	*   
+	*   Summary:    This funciton initiates the native plugin.
+	*
+	*   @todo       Nothing.
+	*
+	********************************************************************************/
 	public void init(){
 		if (!isInitiated) {
 			
@@ -349,10 +368,15 @@ public class OBEPlugin : MonoBehaviour{
 		}
 	}
 
-	//private void setCallback(OBEPluginCallback cb){
-	//	callback = cb;
-	//}
-
+	/*******************************************************************************
+	* @name startScanning()
+	********************************************************************************
+	*   
+	*   Summary:    This function starts scanning for OBE devices.
+	*
+	*   @todo       Nothing
+	*
+	********************************************************************************/
 	public void startScanning(){
 		#if UNITY_IOS || UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
 		StartScanning ();
@@ -362,24 +386,62 @@ public class OBEPlugin : MonoBehaviour{
 		isScanning = true;
 	}
 
+	/*******************************************************************************
+	* @name stopScanning()
+	********************************************************************************
+	*   
+	*   Summary:    This function stops scanning for OBE devices.
+	*
+	*   @todo       Nothing
+	*
+	********************************************************************************/
 	public void stopScanning(){
 		#if UNITY_IOS || UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
 		StopScanning ();
 		#endif
 	}
 
+	/*******************************************************************************
+	* @name connectToOBE()
+	********************************************************************************
+	*   
+	*   Summary:    This function connects to an OBE device. 
+	* 
+	* 	@param		index - denotes the index of an OBE device found
+	*
+	*   @todo       Nothing
+	*
+	********************************************************************************/
 	public void connectToOBE(int index){
 		#if UNITY_IOS || UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
 		ConnectToOBE (index);
 		#endif
 	}
 
+	/*******************************************************************************
+	* @name disconnectFromOBE()
+	********************************************************************************
+	*   
+	*   Summary:    This function starts scanning for OBE devices.
+	*
+	*   @todo       Nothing
+	*
+	********************************************************************************/
 	public void disconnectFromOBE(){
 		#if UNITY_IOS || UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
 		DisconnectFromOBE ();
 		#endif
 	}
 
+	/*******************************************************************************
+	* @name updateMotors()
+	********************************************************************************
+	*   
+	*   Summary:    This function updates current motor values.
+	*
+	*   @todo       Nothing
+	*
+	********************************************************************************/
 	public void updateMotors(){
 		//Debug.Log("Trying to Update");
 		//if ((OBEMotor1 != OBEMotor1_old) || (OBEMotor2 != OBEMotor2_old) || (OBEMotor3 != OBEMotor3_old) ||
@@ -418,6 +480,19 @@ public class OBEPlugin : MonoBehaviour{
 	abstract public void FoundOBECharacteristic (string characteristicName);
 	*/
 
+	/*******************************************************************************
+	* @name parseButtons()
+	********************************************************************************
+	*   
+	*   Summary:    This function parses and assigns a button value based on its
+	*				identifier.
+	*
+	*	@param		button 		- button value
+	*	@param		identifier 	- value that determines which hand owns the button
+	*
+	*   @todo       Possible function optimization
+	*
+	********************************************************************************/
 	private void parseButtons(int button, int identifier){
 
 		Boolean auxbutton1 = ((button & 0x01) > 0) ? true : false;
@@ -444,6 +519,22 @@ public class OBEPlugin : MonoBehaviour{
 		}
 	}
 
+	/*******************************************************************************
+	* @name calculateQuaternion()
+	********************************************************************************
+	*   
+	*   Summary:    This function parses and assigns a button value based on its
+	*				identifier.
+	*
+	*	@param		roll 		- roll of the given hand
+	*	@param		pitch 		- pitch of the given hand
+	*	@param		yaw			- yaw of the given hand
+	*	@param		identifier	- value that indicates which hand's values are the 
+	*							  ones to be processed
+	*
+	*   @todo       Possible function optimization.
+	*
+	********************************************************************************/
 	private void calculateQuaternion(float roll, float pitch, float yaw, int identifier){
 		float sinHalfYaw = Mathf.Sin(yaw / 2.0f);
 		float cosHalfYaw = Mathf.Cos(yaw / 2.0f);
@@ -474,5 +565,5 @@ public class OBEPlugin : MonoBehaviour{
 		}
 	}
 
-
+	
 }
