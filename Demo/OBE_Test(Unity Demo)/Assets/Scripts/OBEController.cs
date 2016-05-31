@@ -233,8 +233,9 @@ public class OBEController : MonoBehaviour {
 
 			// Update Battery
 
-			address = up + "," + down + "," + left + "," + right + "," + attack;
-			OSCHandler.Instance.SendMessageToClient ("mainClient", address, 1);
+			// OSC
+			//address = up + "," + down + "," + left + "," + right + "," + attack;
+			//OSCHandler.Instance.SendMessageToClient ("mainClient", address, 1);
 
 
 		}

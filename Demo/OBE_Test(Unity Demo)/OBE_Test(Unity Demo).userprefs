@@ -1,11 +1,12 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/OBEController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/OBEPlugin.cs">
     <Files>
-      <File FileName="Assets/Scripts/OBEController.cs" Line="81" Column="2" />
+      <File FileName="Assets/Scripts/OBEController.cs" Line="29" Column="35" />
       <File FileName="Assets/Scripts/OSC/OSCClient.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/OSCHandler.cs" Line="76" Column="7" />
-      <File FileName="Assets/Scripts/OBEPlugin.cs" Line="161" Column="2" />
+      <File FileName="Assets/Scripts/OSCHandler.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/OBEPlugin.cs" Line="279" Column="57" />
+      <File FileName="Assets/Scripts/OBEMath.cs" Line="12" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
