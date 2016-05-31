@@ -263,8 +263,11 @@ public class OBEPlugin : MonoBehaviour{
 			//Debug.Log (buttons.ToString ());
 			//Debug.Log (button1.ToString() + button2.ToString() + button3.ToString() + button4.ToString());
 
-			float rollLeftAux = OBEMath.calculateRoll (-1.0f * azLeft, axLeft);
-			float pitchLeftAux = -1.0f * OBEMath.calculatePitch (ayLeft, axLeft, -1.0f * azLeft);
+			//LEFT
+			//float rollLeftAux = OBEMath.calculateRoll (-1.0f * azLeft, axLeft);
+			//float pitchLeftAux = -1.0f * OBEMath.calculatePitch (ayLeft, axLeft, -1.0f * azLeft);
+			float rollLeftAux = OBEMath.calculateRoll (-1.0f * azLeft, -1.0f * ayLeft);
+			float pitchLeftAux = -1.0f * OBEMath.calculatePitch (axLeft, ayLeft, -1.0f * azLeft);
 			rollLeft = alpha * rollLeftAux + (1.0f - alpha) * rollLeft;
 			pitchLeft = alpha * pitchLeftAux + (1.0f - alpha) * pitchLeft;
 
@@ -272,7 +275,7 @@ public class OBEPlugin : MonoBehaviour{
 			/*Debug.Log ("Pitch " + pitchLeft.ToString() 
 				+ ", Roll: " + rollLeft.ToString());*/
 
-			calculateQuaternion (pitchLeft, rollLeft, 0.0f, OBEQuaternionLeft);
+			calculateQuaternion (-pitchLeft, -rollLeft, 0.0f, OBEQuaternionLeft);
 
 
 			//rollLeft = calculateRoll (azLeft, -1.0f * axLeft);
@@ -284,9 +287,11 @@ public class OBEPlugin : MonoBehaviour{
 			QuaternionRight.Set (q[0], q[1], q[2], q[3]);
 			*/
 
-
-			float rollRightAux = OBEMath.calculateRoll (azRight, -1.0f * axRight);
-			float pitchRightAux = -1.0f * OBEMath.calculatePitch (ayRight, axRight, azRight);
+			//RIGHT
+			//float rollRightAux = OBEMath.calculateRoll (azRight, -1.0f * axRight);
+			//float pitchRightAux = -1.0f * OBEMath.calculatePitch (ayRight, axRight, azRight);
+			float rollRightAux = OBEMath.calculateRoll (azRight, ayRight);
+			float pitchRightAux = -1.0f * OBEMath.calculatePitch (axRight, ayRight, azRight);
 			rollRight = alpha * rollRightAux + (1.0f - alpha) * rollRight;
 			pitchRight = alpha * pitchRightAux + (1.0f - alpha) * pitchRight;
 
@@ -294,20 +299,22 @@ public class OBEPlugin : MonoBehaviour{
 			//Debug.Log ("Pitch " + pitchRight.ToString() 
 			//+ ", Roll: " + rollRight.ToString());
 
-			calculateQuaternion (pitchRight, rollRight, 0.0f, OBEQuaternionRight);
+			// 2.5 , 0, -5
+
+			calculateQuaternion (-pitchRight, -rollRight, 0, OBEQuaternionRight);
 
 
-
+			//CENTER
 			float rollCenterAux = OBEMath.calculateRoll (azCenter, -1.0f * axCenter);
 			float pitchCenterAux = -1.0f * OBEMath.calculatePitch (ayCenter, axCenter, azCenter);
 			rollCenter = alpha * rollCenterAux + (1.0f - alpha) * rollCenter;
 			pitchCenter = alpha * pitchCenterAux + (1.0f - alpha) * pitchCenter;
 
 			//Debug.Log (axLeft.ToString() + "," + ayLeft.ToString() + "," + azLeft.ToString());
-			//Debug.Log ("Pitch " + pitchRight.ToString() 
-			//+ ", Roll: " + rollRight.ToString());
+			//Debug.Log ("Pitch " + (pitchRight * 180 / Mathf.PI).ToString() 
+			//	+ ", Roll: " + (rollRight * 180 / Mathf.PI).ToString());
 
-			calculateQuaternion (pitchCenter, rollCenter, 0.0f, OBEQuaternionCenter);
+			//calculateQuaternion (pitchCenter , rollCenter, 0.0f, OBEQuaternionCenter);
 
 			/*w = getQW (OBEQuaternionLeft); x = getQX (OBEQuaternionLeft);
 			y = getQY (OBEQuaternionLeft); z = getQZ (OBEQuaternionLeft);

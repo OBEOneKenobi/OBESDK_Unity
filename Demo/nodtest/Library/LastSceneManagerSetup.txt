@@ -1,4 +1,0 @@
-sceneSetups:
-- path: Assets/Nod/Examples/Scenes/Example_Keyboard.unity
-  isLoaded: 1
-  isActive: 1

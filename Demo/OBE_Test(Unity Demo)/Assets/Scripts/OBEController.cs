@@ -156,6 +156,7 @@ public class OBEController : MonoBehaviour {
 					OBEPlugin.Instance.OBEMotor4 = 0.0f;
 				}
 
+				/*
 				// OSC detection
 				if (OSCHandler.Instance.shouldVibrate) {
 					OBEPlugin.Instance.OBEMotor1 = 1.0f; OBEPlugin.Instance.OBEMotor2 = 1.0f;
@@ -163,7 +164,7 @@ public class OBEController : MonoBehaviour {
 				} else {
 					OBEPlugin.Instance.OBEMotor1 = 0.0f; OBEPlugin.Instance.OBEMotor2 = 0.0f;
 					OBEPlugin.Instance.OBEMotor3 = 0.0f; OBEPlugin.Instance.OBEMotor4 = 0.0f;
-				}
+				}*/
 
 				//Debug.Log (plugin.OBEMotor1.ToString());
 				OBEPlugin.Instance.updateMotors ();
@@ -172,30 +173,35 @@ public class OBEController : MonoBehaviour {
 			// LEFT
 			// ---------
 			if (OBEPlugin.Instance.LeftButton1) {
-				Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
+				//Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
+				Renderer rend = obeCube.gameObject.GetComponent<Renderer> ();
 				rend.material.color = new Color (0.0f, 1.0f, 0.0f);
 
 				up = "on"; down = "off"; left = "off"; right = "off";
 			} else {
 				if (OBEPlugin.Instance.LeftButton2) {
-					Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
+					//Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
+					Renderer rend = obeCube.gameObject.GetComponent<Renderer> ();
 					rend.material.color = new Color (1.0f, 0.0f, 0.0f);
 
 					up = "off"; down = "on"; left = "off"; right = "off";
 				} else {
 					if (OBEPlugin.Instance.LeftButton3) {
-						Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
+						//Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
+						Renderer rend = obeCube.gameObject.GetComponent<Renderer> ();
 						rend.material.color = new Color (0.0f, 0.0f, 1.0f);
 
 						up = "off"; down = "off"; left = "on"; right = "off";
 					} else {
 						if (OBEPlugin.Instance.LeftButton4) {
-							Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
+							//Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
+							Renderer rend = obeCube.gameObject.GetComponent<Renderer> ();
 							rend.material.color = new Color (1.0f, 0.0f, 1.0f);
 
 							up = "off"; down = "off"; left = "off"; right = "on";
 						} else {
-							Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
+							//Renderer rend = obeCube2Body.gameObject.GetComponent<Renderer> ();
+							Renderer rend = obeCube.gameObject.GetComponent<Renderer> ();
 							rend.material.color = new Color (1.0f, 1.0f, 1.0f);
 
 							up = "off"; down = "off"; left = "off"; right = "off";
@@ -205,7 +211,8 @@ public class OBEController : MonoBehaviour {
 			}
 				
 			if (OBEPlugin.Instance.RightButton1) {
-				Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
+				//Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
+				Renderer rend = obeCube2.gameObject.GetComponent<Renderer> ();
 				rend.material.color = new Color (0.0f, 1.0f, 0.0f);
 
 				attack = "on";
@@ -213,18 +220,22 @@ public class OBEController : MonoBehaviour {
 
 				attack = "off";
 				if (OBEPlugin.Instance.RightButton2) {
-					Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
+					//Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
+					Renderer rend = obeCube2.gameObject.GetComponent<Renderer> ();
 					rend.material.color = new Color (1.0f, 0.0f, 0.0f);
 				} else {
 					if (OBEPlugin.Instance.RightButton3) {
-						Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
+						//Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
+						Renderer rend = obeCube2.gameObject.GetComponent<Renderer> ();
 						rend.material.color = new Color (0.0f, 0.0f, 1.0f);
 					} else {
 						if (OBEPlugin.Instance.RightButton4) {
-							Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
+							//Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
+							Renderer rend = obeCube2.gameObject.GetComponent<Renderer> ();
 							rend.material.color = new Color (1.0f, 0.0f, 1.0f);
 						} else {
-							Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
+							//Renderer rend = obeCubeBody.gameObject.GetComponent<Renderer> ();
+							Renderer rend = obeCube2.gameObject.GetComponent<Renderer> ();
 							rend.material.color = new Color (1.0f, 1.0f, 1.0f);
 						}
 					}
